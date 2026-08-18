@@ -96,13 +96,63 @@
         .btn-danger { background-color: transparent; border: 1px solid #ff5252; color: #ff5252; margin-top: 30px; }
         .btn-danger:hover { background-color: #331414; }
         
-        ul { list-style-type: none; padding: 0; }
+        ul { list-style-type: none; padding: 0; margin-top: 10px;}
         li { background: var(--item-bg); margin-top: 8px; padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid #ff5252; transition: background-color 0.3s ease;}
         
         .date-text { font-size: 12px; color: var(--date-color); display: block; margin-top: 2px;}
-        .item-details { display: flex; flex-direction: column; }
-        .monto-text { font-weight: bold; font-size: 16px; }
+        .item-details { display: flex; flex-direction: column; flex-grow: 1;}
+        .monto-text { font-weight: bold; font-size: 16px; margin-right: 15px;}
         h3 { color: var(--header-color); transition: color 0.3s ease; }
+
+        /* Estilos para accesos rápidos */
+        .quick-access-container {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            margin-top: 10px;
+            -ms-overflow-style: none; /* IE y Edge */
+            scrollbar-width: none; /* Firefox */
+        }
+        .quick-access-container::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+        .btn-quick {
+            background-color: var(--card-bg);
+            border: 1px solid #4db8ff;
+            color: var(--text-color);
+            padding: 8px 12px;
+            border-radius: 20px;
+            white-space: nowrap;
+            font-size: 14px;
+            margin-top: 0;
+            width: auto;
+            transition: all 0.2s ease;
+        }
+        .btn-quick:hover {
+            background-color: #4db8ff;
+            color: #121212;
+        }
+
+        /* Estilo para botón de borrar */
+        .btn-delete {
+            background: none;
+            border: none;
+            color: #ff5252;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 5px;
+            margin: 0;
+            width: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: rgba(255, 82, 82, 0.1);
+        }
+        .btn-delete:hover {
+            background-color: rgba(255, 82, 82, 0.2);
+        }
     </style>
 </head>
 <body>
@@ -118,12 +168,21 @@
         <div class="balance" id="balanceText">$0.00</div>
     </div>
 
-    <h3 style="font-size: 18px; margin-bottom: 5px;">Registrar Gasto</h3>
-    <label for="concepto">¿En qué gastaste?</label>
-    <input type="text" id="concepto" placeholder="Ej. urbano, halcón, gym, materiales...">
+    <h3 style="font-size: 18px; margin-bottom: 5px;">Accesos Rápidos</h3>
+    <div class="quick-access-container">
+        <button class="btn-quick" onclick="agregarGastoRapido('Urbano', 5)">🚌 Urbano ($5)</button>
+        <button class="btn-quick" onclick="agregarGastoRapido('Halcón', 10)">🦅 Halcón ($10)</button>
+        <button class="btn-quick" onclick="agregarGastoRapido('Mototaxi', 10)">🛺 Mototaxi ($10)</button>
+        <button class="btn-quick" onclick="agregarGastoRapido('Camión', 10)">🚍 Camión ($10)</button>
+        <button class="btn-quick" onclick="agregarGastoRapido('Comida', 55)">🌮 Comida ($55)</button>
+    </div>
+
+    <h3 style="font-size: 18px; margin-bottom: 5px; margin-top: 20px;">Gasto Manual</h3>
+    <label for="concepto" style="margin-top: 5px;">¿En qué gastaste?</label>
+    <input type="text" id="concepto" placeholder="Ej. materiales, pase...">
     
     <label for="monto">¿Cuánto costó? ($):</label>
-    <input type="number" id="monto" placeholder="Ej. 10" inputmode="decimal">
+    <input type="number" id="monto" placeholder="Ej. 15" inputmode="decimal">
     
     <button onclick="agregarGasto()">Agregar Gasto</button>
 
@@ -142,11 +201,11 @@
     function applyTheme() {
         if (isLightMode) {
             document.body.classList.add('light-mode');
-            themeBtn.innerText = '🌙'; // Luna para cambiar a modo oscuro
+            themeBtn.innerText = '🌙'; 
             themeMeta.setAttribute('content', '#f4f7f6');
         } else {
             document.body.classList.remove('light-mode');
-            themeBtn.innerText = '⛅'; // Sol con nube para cambiar a modo claro
+            themeBtn.innerText = '⛅'; 
             themeMeta.setAttribute('content', '#121212');
         }
     }
@@ -156,7 +215,7 @@
         localStorage.setItem('app_theme', isLightMode ? 'light' : 'dark');
         applyTheme();
     }
-    applyTheme(); // Ejecutar al cargar la página
+    applyTheme(); 
 
     // --- LÓGICA DEL SERVICE WORKER ---
     if ('serviceWorker' in navigator) {
@@ -177,6 +236,13 @@
         actualizarUI();
     }
 
+    function agregarGastoRapido(concepto, monto) {
+        let fecha = new Date().toLocaleDateString('es-MX', { weekday: 'short', month: 'short', day: 'numeric' });
+        gastos.unshift({concepto: concepto, monto: monto, fecha: fecha}); // unshift para que aparezca arriba
+        localStorage.setItem('misGastos_v3', JSON.stringify(gastos));
+        actualizarUI();
+    }
+
     function agregarGasto() {
         let concepto = document.getElementById('concepto').value;
         let monto = parseFloat(document.getElementById('monto').value);
@@ -188,12 +254,19 @@
 
         let fecha = new Date().toLocaleDateString('es-MX', { weekday: 'short', month: 'short', day: 'numeric' });
 
-        gastos.push({concepto: concepto, monto: monto, fecha: fecha});
+        gastos.unshift({concepto: concepto, monto: monto, fecha: fecha});
         localStorage.setItem('misGastos_v3', JSON.stringify(gastos));
 
         document.getElementById('concepto').value = '';
         document.getElementById('monto').value = '';
         
+        actualizarUI();
+    }
+
+    function borrarGasto(index) {
+        // Se elimina la alerta para que sea más rápido borrar errores, pero si prefieres puedes poner un confirm()
+        gastos.splice(index, 1);
+        localStorage.setItem('misGastos_v3', JSON.stringify(gastos));
         actualizarUI();
     }
 
@@ -211,6 +284,7 @@
                     <span class="date-text">${gasto.fecha}</span>
                 </div>
                 <span class="monto-text">$${gasto.monto.toFixed(2)}</span>
+                <button class="btn-delete" onclick="borrarGasto(${index})" title="Borrar gasto">🗑️</button>
             `;
             lista.appendChild(li);
         });
@@ -238,3 +312,4 @@
 </script>
 </body>
 </html>
+
