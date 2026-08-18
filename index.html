@@ -5,41 +5,120 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Mi Balance Semanal</title>
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#121212">
+    <meta name="theme-color" content="#121212" id="themeColorMeta">
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #121212; color: #ffffff; margin: 0; padding: 15px; }
-        .container { max-width: 100%; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        /* Variables de color para cambiar fácilmente entre modos */
+        :root {
+            --bg-color: #121212;
+            --container-bg: #1e1e1e;
+            --text-color: #ffffff;
+            --card-bg: #2d2d2d;
+            --input-bg: #333333;
+            --input-border: #444444;
+            --label-color: #aaaaaa;
+            --item-bg: #2d2d2d;
+            --date-color: #888888;
+            --header-color: #eee;
+        }
+
+        .light-mode {
+            --bg-color: #f4f7f6;
+            --container-bg: #ffffff;
+            --text-color: #333333;
+            --card-bg: #e8f4f8;
+            --input-bg: #ffffff;
+            --input-border: #cccccc;
+            --label-color: #555555;
+            --item-bg: #ecf0f1;
+            --date-color: #666666;
+            --header-color: #333333;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: var(--bg-color); 
+            color: var(--text-color); 
+            margin: 0; 
+            padding: 15px; 
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        .container { 
+            max-width: 100%; 
+            margin: auto; 
+            background: var(--container-bg); 
+            padding: 20px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
+            position: relative;
+            transition: background-color 0.3s ease;
+        }
+        
+        /* Botón de tema */
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            padding: 0;
+            margin: 0;
+            width: auto;
+            outline: none;
+        }
+
         h2 { text-align: center; color: #4db8ff; margin-top: 0; font-size: 24px;}
-        .card { background: #2d2d2d; padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center; border-left: 4px solid #4db8ff; }
+        .card { background: var(--card-bg); padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center; border-left: 4px solid #4db8ff; transition: background-color 0.3s ease;}
         .balance { font-size: 32px; font-weight: bold; color: #00e676; margin-top: 5px; }
         .negativo { color: #ff5252; }
-        label { font-weight: bold; display: block; margin-top: 15px; font-size: 14px; color: #aaaaaa; }
-        input { width: 100%; padding: 12px; margin-top: 5px; border-radius: 8px; border: 1px solid #444; background: #333; color: white; box-sizing: border-box; font-size: 16px; }
+        
+        label { font-weight: bold; display: block; margin-top: 15px; font-size: 14px; color: var(--label-color); transition: color 0.3s ease;}
+        
+        input { 
+            width: 100%; 
+            padding: 12px; 
+            margin-top: 5px; 
+            border-radius: 8px; 
+            border: 1px solid var(--input-border); 
+            background: var(--input-bg); 
+            color: var(--text-color); 
+            box-sizing: border-box; 
+            font-size: 16px; 
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
         input:focus { outline: none; border-color: #4db8ff; }
+        
         button { width: 100%; padding: 14px; margin-top: 20px; border-radius: 8px; border: none; background-color: #4db8ff; color: #121212; cursor: pointer; font-weight: bold; font-size: 16px; }
         button:hover { background-color: #3aa3e3; }
+        
         .btn-danger { background-color: transparent; border: 1px solid #ff5252; color: #ff5252; margin-top: 30px; }
         .btn-danger:hover { background-color: #331414; }
+        
         ul { list-style-type: none; padding: 0; }
-        li { background: #2d2d2d; margin-top: 8px; padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid #ff5252; }
-        .date-text { font-size: 12px; color: #888; display: block; margin-top: 2px;}
+        li { background: var(--item-bg); margin-top: 8px; padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid #ff5252; transition: background-color 0.3s ease;}
+        
+        .date-text { font-size: 12px; color: var(--date-color); display: block; margin-top: 2px;}
         .item-details { display: flex; flex-direction: column; }
         .monto-text { font-weight: bold; font-size: 16px; }
+        h3 { color: var(--header-color); transition: color 0.3s ease; }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()">⛅</button>
     <h2>Control de Gastos</h2>
     
     <div class="card">
         <label for="ingreso">¿Cuánto te dieron para la semana? ($):</label>
         <input type="number" id="ingreso" placeholder="Ej. 600" onchange="guardarIngreso()" inputmode="decimal">
-        <p style="margin-bottom: 0; color: #ccc; font-size: 14px; margin-top: 15px;">Balance Disponible:</p>
+        <p style="margin-bottom: 0; font-size: 14px; margin-top: 15px; color: var(--label-color);">Balance Disponible:</p>
         <div class="balance" id="balanceText">$0.00</div>
     </div>
 
-    <h3 style="color: #eee; font-size: 18px; margin-bottom: 5px;">Registrar Gasto</h3>
+    <h3 style="font-size: 18px; margin-bottom: 5px;">Registrar Gasto</h3>
     <label for="concepto">¿En qué gastaste?</label>
     <input type="text" id="concepto" placeholder="Ej. urbano, halcón, gym, materiales...">
     
@@ -48,20 +127,45 @@
     
     <button onclick="agregarGasto()">Agregar Gasto</button>
 
-    <h3 style="margin-top: 30px; color: #eee; font-size: 18px; margin-bottom: 10px;">Historial de la Semana</h3>
+    <h3 style="margin-top: 30px; font-size: 18px; margin-bottom: 10px;">Historial de la Semana</h3>
     <ul id="listaGastos"></ul>
 
     <button class="btn-danger" onclick="limpiarSemana()">Terminar Semana (Borrar historial)</button>
 </div>
 
 <script>
-    // Registrar el Service Worker para que funcione sin internet
+    // --- LÓGICA DE MODO CLARO/OSCURO ---
+    const themeBtn = document.getElementById('themeToggle');
+    const themeMeta = document.getElementById('themeColorMeta');
+    let isLightMode = localStorage.getItem('app_theme') === 'light';
+
+    function applyTheme() {
+        if (isLightMode) {
+            document.body.classList.add('light-mode');
+            themeBtn.innerText = '🌙'; // Luna para cambiar a modo oscuro
+            themeMeta.setAttribute('content', '#f4f7f6');
+        } else {
+            document.body.classList.remove('light-mode');
+            themeBtn.innerText = '⛅'; // Sol con nube para cambiar a modo claro
+            themeMeta.setAttribute('content', '#121212');
+        }
+    }
+
+    function toggleTheme() {
+        isLightMode = !isLightMode;
+        localStorage.setItem('app_theme', isLightMode ? 'light' : 'dark');
+        applyTheme();
+    }
+    applyTheme(); // Ejecutar al cargar la página
+
+    // --- LÓGICA DEL SERVICE WORKER ---
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js')
         .then(() => console.log('Service Worker registrado'))
         .catch(err => console.log('Error en Service Worker', err));
     }
 
+    // --- LÓGICA DE LA APLICACIÓN ---
     let gastos = JSON.parse(localStorage.getItem('misGastos_v3')) || [];
     let ingreso = parseFloat(localStorage.getItem('miIngreso_v3')) || 0;
 
