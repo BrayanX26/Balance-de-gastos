@@ -128,11 +128,33 @@
         .archive-date { font-size: 16px; font-weight: bold; color: #4db8ff; }
         .archive-stats { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 10px; color: var(--text-color); }
         .archive-btn { padding: 10px; font-size: 14px; background: transparent; border: 1px solid #4db8ff; color: #4db8ff; margin-top: 5px; flex: 1; border-radius: 8px; cursor: pointer; font-weight: bold;}
-        .archive-btn.excel { border-color: #00e676; color: #00e676; }
+        .archive-btn.pdf { border-color: #f44336; color: #f44336; }
         
         /* Botón borrar archivo corregido con Flexbox */
         .btn-delete-archive { background: rgba(255, 82, 82, 0.1); color: #ff5252; border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background-color 0.2s ease; flex-shrink: 0; margin-left: 10px;}
         .btn-delete-archive:hover { background: rgba(255, 82, 82, 0.3); }
+    
+        /* Estilos para impresión (PDF) */
+        @media print {
+            body * { visibility: hidden; }
+            body { background: white !important; color: black !important; }
+            #printArea, #printArea * { visibility: visible; }
+            #printArea { position: absolute; left: 0; top: 0; width: 100%; padding: 20px; display: block !important; }
+            .print-header { text-align: center; margin-bottom: 20px; font-family: sans-serif; }
+            .print-title { font-size: 26px; color: #1a1a1a; font-weight: bold; margin: 0; }
+            .print-subtitle { font-size: 14px; color: #555; margin-top: 5px; }
+            .print-summary { display: flex; justify-content: space-around; margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 8px; font-family: sans-serif; }
+            .print-summary-item { text-align: center; font-size: 16px; color: #333; }
+            .print-summary-value { font-size: 20px; font-weight: bold; margin-top: 5px; }
+            .print-chart-container { display: flex; align-items: center; justify-content: center; gap: 30px; margin: 30px 0; font-family: sans-serif; }
+            .print-pie { width: 150px; height: 150px; border-radius: 50%; position: relative; -webkit-print-color-adjust: exact; color-adjust: exact; print-color-adjust: exact; box-shadow: none; border: 1px solid #ddd; }
+            .print-pie::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 55%; height: 55%; background-color: white; border-radius: 50%; }
+            .print-table { width: 100%; border-collapse: collapse; font-family: sans-serif; margin-top: 20px; font-size: 14px; color: #333; }
+            .print-table th { background-color: #f0f0f0 !important; color: #333 !important; font-weight: bold; padding: 10px; border-bottom: 2px solid #ccc; text-align: left; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .print-table td { padding: 10px; border-bottom: 1px solid #eee; }
+            .print-cat-badge { padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .print-footer { margin-top: 40px; text-align: center; font-size: 12px; color: #888; font-family: sans-serif; }
+        }
     </style>
 </head>
 <body>
@@ -258,6 +280,7 @@
     </div>
 </div>
 
+<div id="printArea" style="display:none;"></div>
 <script>
     // --- LÓGICA DE MODO CLARO/OSCURO ---
     const themeBtn = document.getElementById('themeToggle');
@@ -569,40 +592,122 @@
         balanceEl.style.color = balance < 0 ? '#ff5252' : '#00e676';
     }
 
-    // --- EXPORTAR A CSV SEGURO (CON UTF-8 BOM PARA EXCEL) ---
-    function exportarExcel(idx) {
+    // --- EXPORTAR A PDF PROFESIONAL ---
+    function exportarPDF(idx) {
         let archivo = JSON.parse(localStorage.getItem('historialArchivado_v1')) || [];
         let semana = archivo[idx];
+        let colorClase = semana.sobrante < 0 ? '#ff5252' : '#00e676';
         
-        // 1. Añadimos el BOM (Byte Order Mark) para que Excel lea los acentos y las ñ correctamente
-        let csvContent = "\uFEFF"; 
-        
-        // 2. Encabezados
-        csvContent += "Fecha,Concepto,Categoria,Monto\n";
-        
-        // 3. Filas de gastos
+        let printArea = document.getElementById('printArea');
+        if(!printArea) {
+            printArea = document.createElement('div');
+            printArea.id = 'printArea';
+            document.body.appendChild(printArea);
+        }
+
+        // Calcular grafica
+        let totalGastos = semana.totalGastos;
+        let catSums = {};
         semana.gastos.forEach(g => {
             let cat = g.categoria || 'Otros';
-            // Si el concepto tiene comas, lo encerramos en comillas dobles para que el CSV no se rompa
-            let desc = `"${g.concepto.replace(/"/g, '""')}"`; 
-            csvContent += `${g.fecha},${desc},${cat},${g.monto.toFixed(2)}\n`;
+            catSums[cat] = (catSums[cat] || 0) + g.monto;
         });
-        
-        // 4. Totales al final
-        csvContent += `\nTOTAL INGRESOS,,,${semana.ingreso.toFixed(2)}\n`;
-        csvContent += `TOTAL GASTOS,,,${semana.totalGastos.toFixed(2)}\n`;
-        csvContent += `BALANCE FINAL,,,${semana.sobrante.toFixed(2)}\n`;
 
-        // 5. Creación y descarga del archivo
-        let blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        let url = URL.createObjectURL(blob);
-        let link = document.createElement("a");
-        link.setAttribute("href", url);
-        let nombreArchivo = "Balance_" + semana.fecha.replace(/ /g, "_").replace(/,/g, "") + ".csv";
-        link.setAttribute("download", nombreArchivo);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        let chartCSS = [];
+        let currentDeg = 0;
+        let legendHTML = '';
+        if(totalGastos > 0) {
+            for (let c in catSums) {
+                let percentage = (catSums[c] / totalGastos) * 360;
+                let color = catColors[c] || '#9e9e9e';
+                chartCSS.push(`${color} ${currentDeg}deg ${currentDeg + percentage}deg`);
+                currentDeg += percentage;
+                
+                let pctText = ((catSums[c] / totalGastos) * 100).toFixed(1);
+                legendHTML += `
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; color:#333;">
+                        <div style="display:flex; align-items:center;">
+                            <span style="width: 12px; height: 12px; border-radius: 50%; background: ${color}; display: inline-block; margin-right: 8px; -webkit-print-color-adjust: exact; print-color-adjust: exact;"></span>
+                            ${c}
+                        </div>
+                        <strong style="margin-left:15px;">$${catSums[c].toFixed(2)} <span style="font-weight:normal; font-size:11px; color:#555;">(${pctText}%)</span></strong>
+                    </div>`;
+            }
+        }
+
+        let tableRows = '';
+        if(semana.gastos.length === 0) {
+            tableRows = `<tr><td colspan="4" style="text-align:center;">No hubo gastos registrados en este periodo.</td></tr>`;
+        } else {
+            semana.gastos.forEach(g => {
+                let cat = g.categoria || 'Otros';
+                let hexColor = catColors[cat] || '#9e9e9e';
+                tableRows += `
+                    <tr>
+                        <td>${g.fecha}</td>
+                        <td><strong>${g.concepto}</strong></td>
+                        <td><span class="print-cat-badge" style="background-color: ${hexColor};">${cat}</span></td>
+                        <td style="text-align:right;">$${g.monto.toFixed(2)}</td>
+                    </tr>`;
+            });
+        }
+
+        let html = `
+            <div class="print-header">
+                <h1 class="print-title">Reporte de Balance Semanal</h1>
+                <div class="print-subtitle"><strong>Periodo:</strong> ${semana.fecha} ${semana.etiqueta ? `(${semana.etiqueta})` : ''}</div>
+            </div>
+            
+            <div class="print-summary">
+                <div class="print-summary-item">
+                    <div>Total Recibido</div>
+                    <div class="print-summary-value" style="color: #333;">$${semana.ingreso.toFixed(2)}</div>
+                </div>
+                <div class="print-summary-item">
+                    <div>Total Gastado</div>
+                    <div class="print-summary-value" style="color: #333;">$${semana.totalGastos.toFixed(2)}</div>
+                </div>
+                <div class="print-summary-item" style="color: ${colorClase}; -webkit-print-color-adjust: exact; print-color-adjust: exact;">
+                    <div style="color: #333;">Balance Final</div>
+                    <div class="print-summary-value">$${semana.sobrante.toFixed(2)}</div>
+                </div>
+            </div>
+        `;
+
+        if(totalGastos > 0) {
+            html += `
+            <div class="print-chart-container">
+                <div class="print-pie" style="background: conic-gradient(${chartCSS.join(', ')});"></div>
+                <div style="font-size:14px;">${legendHTML}</div>
+            </div>`;
+        }
+
+        html += `
+            <table class="print-table">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Concepto</th>
+                        <th>Categoría</th>
+                        <th style="text-align:right;">Monto ($)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${tableRows}
+                </tbody>
+            </table>
+            
+            <div class="print-footer">
+                Generado por App Balance ITO • ${new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' })}
+            </div>
+        `;
+
+        printArea.innerHTML = html;
+        
+        // Timeout para asegurar que el DOM se pintó
+        setTimeout(() => {
+            window.print();
+        }, 300);
     }
 
     // --- ARCHIVO Y CERRAR SEMANA ---
@@ -681,7 +786,7 @@
                 </div>
                 <div style="display: flex; gap: 10px; margin-top: 15px;">
                     <button class="archive-btn" onclick="verDetallesArchivo(${idx})">Ver gastos</button>
-                    <button class="archive-btn excel" onclick="exportarExcel(${idx})">📥 Exportar a Excel</button>
+                    <button class="archive-btn pdf" onclick="exportarPDF(${idx})">📄 Guardar como PDF</button>
                 </div>
             `;
             container.appendChild(card);
