@@ -7,7 +7,7 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#121212" id="themeColorMeta">
     <style>
-        /* Variables de color para cambiar fácilmente entre modos */
+        /* Variables de color */
         :root {
             --bg-color: #121212;
             --container-bg: #1e1e1e;
@@ -19,6 +19,7 @@
             --item-bg: #2d2d2d;
             --date-color: #888888;
             --header-color: #eee;
+            --modal-bg: rgba(0, 0, 0, 0.7);
         }
 
         .light-mode {
@@ -32,127 +33,59 @@
             --item-bg: #ecf0f1;
             --date-color: #666666;
             --header-color: #333333;
+            --modal-bg: rgba(0, 0, 0, 0.4);
         }
 
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background-color: var(--bg-color); 
-            color: var(--text-color); 
-            margin: 0; 
-            padding: 15px; 
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 15px; transition: background-color 0.3s ease, color 0.3s ease; }
+        .container { max-width: 100%; margin: auto; background: var(--container-bg); padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: relative; transition: background-color 0.3s ease; }
         
-        .container { 
-            max-width: 100%; 
-            margin: auto; 
-            background: var(--container-bg); 
-            padding: 20px; 
-            border-radius: 12px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
-            position: relative;
-            transition: background-color 0.3s ease;
-        }
-        
-        /* Botón de tema */
-        .theme-toggle {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: none;
-            border: none;
-            font-size: 28px;
-            cursor: pointer;
-            padding: 0;
-            margin: 0;
-            width: auto;
-            outline: none;
-        }
-
+        .theme-toggle { position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 28px; cursor: pointer; padding: 0; margin: 0; outline: none; }
         h2 { text-align: center; color: #4db8ff; margin-top: 0; font-size: 24px;}
         .card { background: var(--card-bg); padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center; border-left: 4px solid #4db8ff; transition: background-color 0.3s ease;}
         .balance { font-size: 32px; font-weight: bold; color: #00e676; margin-top: 5px; }
         .negativo { color: #ff5252; }
         
         label { font-weight: bold; display: block; margin-top: 15px; font-size: 14px; color: var(--label-color); transition: color 0.3s ease;}
-        
-        input { 
-            width: 100%; 
-            padding: 12px; 
-            margin-top: 5px; 
-            border-radius: 8px; 
-            border: 1px solid var(--input-border); 
-            background: var(--input-bg); 
-            color: var(--text-color); 
-            box-sizing: border-box; 
-            font-size: 16px; 
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-        }
+        input { width: 100%; padding: 12px; margin-top: 5px; border-radius: 8px; border: 1px solid var(--input-border); background: var(--input-bg); color: var(--text-color); box-sizing: border-box; font-size: 16px; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
         input:focus { outline: none; border-color: #4db8ff; }
         
         button { width: 100%; padding: 14px; margin-top: 20px; border-radius: 8px; border: none; background-color: #4db8ff; color: #121212; cursor: pointer; font-weight: bold; font-size: 16px; }
         button:hover { background-color: #3aa3e3; }
-        
         .btn-danger { background-color: transparent; border: 1px solid #ff5252; color: #ff5252; margin-top: 30px; }
         .btn-danger:hover { background-color: #331414; }
         
         ul { list-style-type: none; padding: 0; margin-top: 10px;}
         li { background: var(--item-bg); margin-top: 8px; padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid #ff5252; transition: background-color 0.3s ease;}
-        
         .date-text { font-size: 12px; color: var(--date-color); display: block; margin-top: 2px;}
         .item-details { display: flex; flex-direction: column; flex-grow: 1;}
         .monto-text { font-weight: bold; font-size: 16px; margin-right: 15px;}
         h3 { color: var(--header-color); transition: color 0.3s ease; }
 
-        /* Estilos para accesos rápidos */
-        .quick-access-container {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            padding-bottom: 10px;
-            margin-top: 10px;
-            -ms-overflow-style: none; /* IE y Edge */
-            scrollbar-width: none; /* Firefox */
-        }
-        .quick-access-container::-webkit-scrollbar {
-            display: none; /* Chrome, Safari, Opera */
-        }
-        .btn-quick {
-            background-color: var(--card-bg);
-            border: 1px solid #4db8ff;
-            color: var(--text-color);
-            padding: 8px 12px;
-            border-radius: 20px;
-            white-space: nowrap;
-            font-size: 14px;
-            margin-top: 0;
-            width: auto;
-            transition: all 0.2s ease;
-        }
-        .btn-quick:hover {
-            background-color: #4db8ff;
-            color: #121212;
-        }
+        /* Accesos Rápidos */
+        .quick-access-container { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 10px; padding-top: 10px; margin-top: 0px; -ms-overflow-style: none; scrollbar-width: none; align-items: center; }
+        .quick-access-container::-webkit-scrollbar { display: none; }
+        
+        .quick-wrapper { position: relative; display: inline-block; flex-shrink: 0; }
+        .btn-quick { background-color: var(--card-bg); border: 1px solid #4db8ff; color: var(--text-color); padding: 8px 12px; border-radius: 20px; white-space: nowrap; font-size: 14px; margin-top: 0; width: auto; transition: all 0.2s ease; }
+        .btn-quick:hover { background-color: #4db8ff; color: #121212; }
+        .btn-add-quick { background-color: transparent; border: 1px dashed #4db8ff; color: #4db8ff; }
+        
+        .btn-delete-quick { position: absolute; top: -6px; right: -6px; background: #ff5252; color: white; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; margin: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.3); font-weight: bold; }
+        
+        .btn-delete { background: none; border: none; color: #ff5252; font-size: 18px; cursor: pointer; padding: 5px; margin: 0; width: auto; display: flex; align-items: center; justify-content: center; border-radius: 50%; background-color: rgba(255, 82, 82, 0.1); }
 
-        /* Estilo para botón de borrar */
-        .btn-delete {
-            background: none;
-            border: none;
-            color: #ff5252;
-            font-size: 18px;
-            cursor: pointer;
-            padding: 5px;
-            margin: 0;
-            width: auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            background-color: rgba(255, 82, 82, 0.1);
-        }
-        .btn-delete:hover {
-            background-color: rgba(255, 82, 82, 0.2);
-        }
+        /* Modales Personalizados */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-bg); z-index: 1000; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s ease; }
+        .modal-overlay.show { display: flex; opacity: 1; }
+        .modal-box { background: var(--container-bg); padding: 25px; border-radius: 15px; width: 85%; max-width: 350px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transform: translateY(20px); transition: transform 0.3s ease; }
+        .modal-overlay.show .modal-box { transform: translateY(0); }
+        .modal-title { margin-top: 0; color: var(--text-color); font-size: 20px; margin-bottom: 10px; }
+        .modal-body { color: var(--label-color); margin-bottom: 25px; font-size: 15px; line-height: 1.4; }
+        .modal-actions { display: flex; justify-content: space-between; gap: 10px; }
+        .btn-modal { margin-top: 0; padding: 12px; border-radius: 8px; font-size: 15px; }
+        .btn-cancel { background: var(--card-bg); color: var(--text-color); border: 1px solid var(--input-border); }
+        .btn-confirm { background: #ff5252; color: white; }
+        .btn-primary { background: #4db8ff; color: #121212; }
     </style>
 </head>
 <body>
@@ -169,12 +102,8 @@
     </div>
 
     <h3 style="font-size: 18px; margin-bottom: 5px;">Accesos Rápidos</h3>
-    <div class="quick-access-container">
-        <button class="btn-quick" onclick="agregarGastoRapido('Urbano', 5)">🚌 Urbano ($5)</button>
-        <button class="btn-quick" onclick="agregarGastoRapido('Halcón', 10)">🦅 Halcón ($10)</button>
-        <button class="btn-quick" onclick="agregarGastoRapido('Mototaxi', 10)">🛺 Mototaxi ($10)</button>
-        <button class="btn-quick" onclick="agregarGastoRapido('Camión', 10)">🚍 Camión ($10)</button>
-        <button class="btn-quick" onclick="agregarGastoRapido('Comida', 55)">🌮 Comida ($55)</button>
+    <div class="quick-access-container" id="quickAccessContainer">
+        <!-- Se llenan por JS -->
     </div>
 
     <h3 style="font-size: 18px; margin-bottom: 5px; margin-top: 20px;">Gasto Manual</h3>
@@ -189,7 +118,38 @@
     <h3 style="margin-top: 30px; font-size: 18px; margin-bottom: 10px;">Historial de la Semana</h3>
     <ul id="listaGastos"></ul>
 
-    <button class="btn-danger" onclick="limpiarSemana()">Terminar Semana (Borrar historial)</button>
+    <button class="btn-danger" onclick="confirmarLimpieza()">Terminar Semana (Borrar historial)</button>
+</div>
+
+<!-- Modal General (Alertas y Confirmaciones) -->
+<div class="modal-overlay" id="customModal">
+    <div class="modal-box">
+        <h3 class="modal-title" id="modalTitle">Mensaje</h3>
+        <div class="modal-body" id="modalBody">Contenido</div>
+        <div class="modal-actions" id="modalActions">
+            <!-- Botones inyectados por JS -->
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Nuevo Acceso Rápido -->
+<div class="modal-overlay" id="addQuickModal">
+    <div class="modal-box">
+        <h3 class="modal-title">Nuevo Acceso Rápido</h3>
+        <label for="quickEmoji" style="text-align: left; margin-top: 5px;">Emoji (opcional):</label>
+        <input type="text" id="quickEmoji" placeholder="Ej. 🏋️‍♂️, 🦾, 🌮" maxlength="2">
+        
+        <label for="quickName" style="text-align: left;">Nombre:</label>
+        <input type="text" id="quickName" placeholder="Ej. Gym, Materiales...">
+        
+        <label for="quickAmount" style="text-align: left;">Costo ($):</label>
+        <input type="number" id="quickAmount" placeholder="Ej. 20" inputmode="decimal">
+        
+        <div class="modal-actions" style="margin-top: 25px;">
+            <button class="btn-modal btn-cancel" onclick="cerrarModalNuevoAcceso()">Cancelar</button>
+            <button class="btn-modal btn-primary" onclick="guardarNuevoAcceso()">Guardar</button>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -217,16 +177,64 @@
     }
     applyTheme(); 
 
-    // --- LÓGICA DEL SERVICE WORKER ---
+    // --- SERVICE WORKER ---
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js')
-        .then(() => console.log('Service Worker registrado'))
-        .catch(err => console.log('Error en Service Worker', err));
+      navigator.serviceWorker.register('sw.js').catch(err => console.log('Error en SW', err));
+    }
+
+    // --- MODALES PERSONALIZADOS ---
+    const customModal = document.getElementById('customModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+    const modalActions = document.getElementById('modalActions');
+
+    function showModal(title, message, isConfirm, onConfirmCallback) {
+        modalTitle.innerText = title;
+        modalBody.innerText = message;
+        modalActions.innerHTML = '';
+
+        if (isConfirm) {
+            const btnCancel = document.createElement('button');
+            btnCancel.className = 'btn-modal btn-cancel';
+            btnCancel.innerText = 'Cancelar';
+            btnCancel.onclick = () => { customModal.classList.remove('show'); };
+            
+            const btnOk = document.createElement('button');
+            btnOk.className = 'btn-modal btn-confirm';
+            btnOk.innerText = 'Sí, borrar todo';
+            btnOk.onclick = () => {
+                customModal.classList.remove('show');
+                if(onConfirmCallback) onConfirmCallback();
+            };
+            
+            modalActions.appendChild(btnCancel);
+            modalActions.appendChild(btnOk);
+        } else {
+            const btnOk = document.createElement('button');
+            btnOk.className = 'btn-modal btn-primary';
+            btnOk.innerText = 'Entendido';
+            btnOk.onclick = () => { customModal.classList.remove('show'); };
+            modalActions.appendChild(btnOk);
+        }
+
+        customModal.classList.add('show');
     }
 
     // --- LÓGICA DE LA APLICACIÓN ---
     let gastos = JSON.parse(localStorage.getItem('misGastos_v3')) || [];
     let ingreso = parseFloat(localStorage.getItem('miIngreso_v3')) || 0;
+    
+    // Accesos rápidos por defecto si no hay guardados
+    let accesosRapidos = JSON.parse(localStorage.getItem('misAccesos_v1'));
+    if (!accesosRapidos) {
+        accesosRapidos = [
+            { nombre: 'Urbano', monto: 5, emoji: '🚌' },
+            { nombre: 'Halcón', monto: 10, emoji: '🦅' },
+            { nombre: 'Mototaxi', monto: 10, emoji: '🛺' },
+            { nombre: 'Comida', monto: 55, emoji: '🌮' }
+        ];
+        localStorage.setItem('misAccesos_v1', JSON.stringify(accesosRapidos));
+    }
 
     document.getElementById('ingreso').value = ingreso || '';
 
@@ -236,9 +244,80 @@
         actualizarUI();
     }
 
+    // --- ACCESOS RÁPIDOS DINÁMICOS ---
+    function renderAccesos() {
+        const container = document.getElementById('quickAccessContainer');
+        container.innerHTML = '';
+
+        accesosRapidos.forEach((acceso, index) => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'quick-wrapper';
+
+            const btn = document.createElement('button');
+            btn.className = 'btn-quick';
+            const icon = acceso.emoji ? `${acceso.emoji} ` : '';
+            btn.innerHTML = `${icon}${acceso.nombre} ($${acceso.monto})`;
+            btn.onclick = () => agregarGastoRapido(acceso.nombre, acceso.monto);
+
+            const delBtn = document.createElement('button');
+            delBtn.className = 'btn-delete-quick';
+            delBtn.innerHTML = '×';
+            delBtn.title = "Borrar acceso rápido";
+            delBtn.onclick = () => borrarAccesoRapido(index);
+
+            wrapper.appendChild(btn);
+            wrapper.appendChild(delBtn);
+            container.appendChild(wrapper);
+        });
+
+        // Botón para agregar nuevos
+        const wrapperAdd = document.createElement('div');
+        wrapperAdd.className = 'quick-wrapper';
+        const addBtn = document.createElement('button');
+        addBtn.className = 'btn-quick btn-add-quick';
+        addBtn.innerHTML = '➕ Nuevo';
+        addBtn.onclick = abrirModalNuevoAcceso;
+        wrapperAdd.appendChild(addBtn);
+        container.appendChild(wrapperAdd);
+    }
+
+    function abrirModalNuevoAcceso() {
+        document.getElementById('quickEmoji').value = '';
+        document.getElementById('quickName').value = '';
+        document.getElementById('quickAmount').value = '';
+        document.getElementById('addQuickModal').classList.add('show');
+    }
+
+    function cerrarModalNuevoAcceso() {
+        document.getElementById('addQuickModal').classList.remove('show');
+    }
+
+    function guardarNuevoAcceso() {
+        const emoji = document.getElementById('quickEmoji').value.trim();
+        const nombre = document.getElementById('quickName').value.trim();
+        const monto = parseFloat(document.getElementById('quickAmount').value);
+
+        if (nombre === '' || isNaN(monto) || monto <= 0) {
+            showModal('Datos incompletos', 'Por favor ingresa un nombre y un costo válido para el acceso rápido.', false);
+            return;
+        }
+
+        accesosRapidos.push({ nombre: nombre, monto: monto, emoji: emoji });
+        localStorage.setItem('misAccesos_v1', JSON.stringify(accesosRapidos));
+        renderAccesos();
+        cerrarModalNuevoAcceso();
+    }
+
+    function borrarAccesoRapido(index) {
+        accesosRapidos.splice(index, 1);
+        localStorage.setItem('misAccesos_v1', JSON.stringify(accesosRapidos));
+        renderAccesos();
+    }
+
+    // --- GASTOS ---
     function agregarGastoRapido(concepto, monto) {
         let fecha = new Date().toLocaleDateString('es-MX', { weekday: 'short', month: 'short', day: 'numeric' });
-        gastos.unshift({concepto: concepto, monto: monto, fecha: fecha}); // unshift para que aparezca arriba
+        gastos.unshift({concepto: concepto, monto: monto, fecha: fecha});
         localStorage.setItem('misGastos_v3', JSON.stringify(gastos));
         actualizarUI();
     }
@@ -248,23 +327,21 @@
         let monto = parseFloat(document.getElementById('monto').value);
 
         if(concepto === '' || isNaN(monto) || monto <= 0) {
-            alert("Por favor pon un concepto y un costo válido.");
+            showModal('Cuidado', 'Por favor pon un concepto y un costo válido.', false);
             return;
         }
 
         let fecha = new Date().toLocaleDateString('es-MX', { weekday: 'short', month: 'short', day: 'numeric' });
 
         gastos.unshift({concepto: concepto, monto: monto, fecha: fecha});
-        localStorage.setItem('misGastos_v3', JSON.stringify(gastos));
+        localStorage.setItem('misGastos_v3', JSON.stringify(gastos)); 
 
         document.getElementById('concepto').value = '';
         document.getElementById('monto').value = '';
-        
         actualizarUI();
     }
 
     function borrarGasto(index) {
-        // Se elimina la alerta para que sea más rápido borrar errores, pero si prefieres puedes poner un confirm()
         gastos.splice(index, 1);
         localStorage.setItem('misGastos_v3', JSON.stringify(gastos));
         actualizarUI();
@@ -300,16 +377,16 @@
         }
     }
 
-    function limpiarSemana() {
-        if(confirm("¿Seguro que quieres borrar todo para empezar una nueva semana en blanco?")) {
+    function confirmarLimpieza() {
+        showModal('Terminar Semana', '¿Seguro que quieres borrar todo para empezar una nueva semana en blanco?', true, () => {
             gastos = [];
             localStorage.removeItem('misGastos_v3');
             actualizarUI();
-        }
+        });
     }
 
     actualizarUI();
+    renderAccesos();
 </script>
 </body>
 </html>
-
