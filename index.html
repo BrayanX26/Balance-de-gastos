@@ -84,10 +84,13 @@
         .btn-delete-quick { position: absolute; top: -5px; right: -5px; background: #ff5252; color: white; border: none; border-radius: 50%; width: 16px; height: 16px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; margin: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.3); font-weight: bold; }
         .btn-delete { background: none; border: none; color: #ff5252; font-size: 18px; cursor: pointer; padding: 5px; margin: 0; width: auto; display: flex; align-items: center; justify-content: center; border-radius: 50%; background-color: rgba(255, 82, 82, 0.1); }
 
-        /* Categorías y Gráficas */
+        /* Categorías y Gráficas Mejoradas (Tipo Donut) */
         .cat-badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; color: #fff; margin-top: 4px; width: fit-content; }
         .chart-container { display: flex; align-items: center; gap: 20px; background: var(--card-bg); padding: 20px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid #4db8ff; }
-        .pie-chart { width: 120px; height: 120px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: background 0.5s ease; }
+        
+        .pie-chart { width: 120px; height: 120px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: background 0.5s ease; position: relative; }
+        .pie-chart::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 55%; height: 55%; background-color: var(--card-bg); border-radius: 50%; box-shadow: inset 0 2px 5px rgba(0,0,0,0.2); transition: background-color 0.3s ease; }
+        
         .chart-legend { flex-grow: 1; display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: var(--text-color); }
         .legend-item { display: flex; align-items: center; justify-content: space-between; }
         .legend-color { width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 8px; flex-shrink: 0; }
@@ -124,7 +127,8 @@
         .archive-card { background: var(--card-bg); border-radius: 10px; padding: 15px; margin-bottom: 15px; text-align: left; border-left: 4px solid #888; }
         .archive-date { font-size: 16px; font-weight: bold; color: #4db8ff; }
         .archive-stats { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 10px; color: var(--text-color); }
-        .archive-btn { padding: 10px; font-size: 14px; background: transparent; border: 1px solid #4db8ff; color: #4db8ff; margin-top: 5px; flex: 1; }
+        .archive-btn { padding: 10px; font-size: 14px; background: transparent; border: 1px solid #4db8ff; color: #4db8ff; margin-top: 5px; flex: 1; border-radius: 8px; cursor: pointer; font-weight: bold;}
+        .archive-btn.excel { border-color: #00e676; color: #00e676; }
         
         /* Botón borrar archivo corregido con Flexbox */
         .btn-delete-archive { background: rgba(255, 82, 82, 0.1); color: #ff5252; border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background-color 0.2s ease; flex-shrink: 0; margin-left: 10px;}
@@ -204,7 +208,7 @@
             <div class="header-section">
                 <button class="menu-btn" onclick="openSidebar()">☰</button>
                 <h2>Historiales Pasados</h2>
-                <div style="width: 40px;"></div> <!-- Div vacío para centrar título -->
+                <div style="width: 40px;"></div>
             </div>
             <p style="color: var(--label-color); font-size: 14px; text-align: left;">Tus semanas cerradas automáticamente o de forma manual aparecen aquí ordenadas.</p>
             <div id="archiveContainer">
@@ -305,14 +309,6 @@
     // --- VARIABLES GLOBALES ---
     let gastos = JSON.parse(localStorage.getItem('misGastos_v4')) || [];
     let ingreso = parseFloat(localStorage.getItem('miIngreso_v3')) || 0;
-    
-    // Migración de v3 a v4 (agregar categoría si no tienen)
-    let oldGastos = JSON.parse(localStorage.getItem('misGastos_v3'));
-    if(oldGastos && gastos.length === 0) {
-        gastos = oldGastos.map(g => ({...g, categoria: g.categoria || 'Otros'}));
-        localStorage.setItem('misGastos_v4', JSON.stringify(gastos));
-        localStorage.removeItem('misGastos_v3');
-    }
 
     // --- CIERRE AUTOMÁTICO DE SEMANA ---
     function getMonday(d) {
@@ -391,18 +387,12 @@
     // --- ACCESOS RÁPIDOS ---
     let accesosRapidos = JSON.parse(localStorage.getItem('misAccesos_v2'));
     if (!accesosRapidos) {
-        // Migrar de v1 a v2 agregando categorías por defecto
-        let oldAccesos = JSON.parse(localStorage.getItem('misAccesos_v1'));
-        if(oldAccesos) {
-            accesosRapidos = oldAccesos.map(a => ({...a, categoria: (a.nombre==='Comida'?'Comida':'Transporte')}));
-        } else {
-            accesosRapidos = [
-                { nombre: 'Urbano', monto: 5, emoji: '🚌', categoria: 'Transporte' },
-                { nombre: 'Halcón', monto: 10, emoji: '🦅', categoria: 'Transporte' },
-                { nombre: 'Mototaxi', monto: 10, emoji: '🛺', categoria: 'Transporte' },
-                { nombre: 'Comida', monto: 55, emoji: '🌮', categoria: 'Comida' }
-            ];
-        }
+        accesosRapidos = [
+            { nombre: 'Urbano', monto: 5, emoji: '🚌', categoria: 'Transporte' },
+            { nombre: 'Halcón', monto: 10, emoji: '🦅', categoria: 'Transporte' },
+            { nombre: 'Mototaxi', monto: 10, emoji: '🛺', categoria: 'Transporte' },
+            { nombre: 'Comida', monto: 55, emoji: '🌮', categoria: 'Comida' }
+        ];
         localStorage.setItem('misAccesos_v2', JSON.stringify(accesosRapidos));
     }
 
@@ -517,7 +507,7 @@
             grupos[gasto.fecha].push({ ...gasto, originalIndex });
         });
 
-        // Actualizar Gráfica
+        // Actualizar Gráfica a formato tipo Donut
         let chartWrapper = document.getElementById('chartContainerWrapper');
         if(gastos.length > 0) {
             chartWrapper.style.display = 'block';
@@ -579,32 +569,82 @@
         balanceEl.style.color = balance < 0 ? '#ff5252' : '#00e676';
     }
 
-    // --- EXPORTAR A CSV (EXCEL) ---
-    function exportarCSV(idx) {
+    // --- EXPORTAR A EXCEL (.XLS HTML) PROFESIONAL ---
+    function exportarExcel(idx) {
         let archivo = JSON.parse(localStorage.getItem('historialArchivado_v1')) || [];
         let semana = archivo[idx];
         
-        // Agregar BOM para que Excel detecte acentos y ñ
-        let csvContent = "\uFEFFFecha,Concepto,Categoria,Monto\n";
-        
+        let colorClase = semana.sobrante < 0 ? '#ff0000' : '#00b050';
+
+        let tableHTML = `
+        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+        <head>
+            <meta charset="utf-8">
+            <style>
+                table { border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; }
+                th { background-color: #4db8ff; color: #ffffff; font-weight: bold; padding: 12px; border: 1px solid #dddddd; text-align: center; font-size: 14px;}
+                td { padding: 8px; border: 1px solid #dddddd; text-align: left; font-size: 13px;}
+                .monto { text-align: right; }
+                .totales { background-color: #f2f2f2; font-weight: bold; text-align: right; font-size: 14px;}
+                .balance-final { color: ${colorClase}; font-weight: bold; text-align: right; font-size: 16px;}
+                .titulo { font-size: 20px; font-weight: bold; color: #333333; text-align: center; }
+            </style>
+        </head>
+        <body>
+            <table>
+                <tr>
+                    <td colspan="4" class="titulo" style="border: none; padding-bottom: 20px;">Reporte de Balance Semanal<br><span style="font-size: 14px; font-weight: normal;">${semana.fecha}</span></td>
+                </tr>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Concepto</th>
+                        <th>Categoría</th>
+                        <th>Monto ($)</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
         semana.gastos.forEach(g => {
             let cat = g.categoria || 'Otros';
-            // Escapar comas en conceptos si los hay
-            let desc = g.concepto.replace(/,/g, " ");
-            csvContent += `${g.fecha},${desc},${cat},$${g.monto}\n`;
+            let hexColor = catColors[cat] || '#9e9e9e';
+            tableHTML += `
+                    <tr>
+                        <td>${g.fecha}</td>
+                        <td>${g.concepto}</td>
+                        <td style="color: ${hexColor}; font-weight: bold;">${cat}</td>
+                        <td class="monto">${g.monto.toFixed(2)}</td>
+                    </tr>`;
         });
-        
-        csvContent += `\nTOTAL INGRESOS,,,$${semana.ingreso}\n`;
-        csvContent += `TOTAL GASTOS,,,$${semana.totalGastos}\n`;
-        csvContent += `BALANCE FINAL,,,$${semana.sobrante}\n`;
 
-        let blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        tableHTML += `
+                </tbody>
+                <tfoot>
+                    <tr><td colspan="4" style="border:none;"></td></tr>
+                    <tr>
+                        <td colspan="3" class="totales">Total Ingresos Recibidos:</td>
+                        <td class="totales">${semana.ingreso.toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="totales">Total Gastos de la Semana:</td>
+                        <td class="totales">${semana.totalGastos.toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="totales">BALANCE FINAL:</td>
+                        <td class="balance-final">${semana.sobrante.toFixed(2)}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </body>
+        </html>`;
+
+        let blob = new Blob([tableHTML], { type: 'application/vnd.ms-excel' });
         let url = URL.createObjectURL(blob);
         let link = document.createElement("a");
-        link.setAttribute("href", url);
-        // Formatear nombre de archivo
-        let nombreArchivo = semana.fecha.replace(/ /g, "_").replace(/,/g, "") + "_Balance.csv";
-        link.setAttribute("download", nombreArchivo);
+        link.href = url;
+        let nombreArchivo = "Balance_" + semana.fecha.replace(/ /g, "_").replace(/,/g, "") + ".xls";
+        link.download = nombreArchivo;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -674,7 +714,6 @@
             let card = document.createElement('div');
             card.className = 'archive-card';
             
-            // Solución absoluta y definitiva para el diseño del bote de basura usando Flexbox
             card.innerHTML = `
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
                     <div class="archive-date" style="margin-bottom: 0;">🗓️ ${semana.fecha} ${notaEtiqueta}</div>
@@ -687,7 +726,7 @@
                 </div>
                 <div style="display: flex; gap: 10px; margin-top: 15px;">
                     <button class="archive-btn" onclick="verDetallesArchivo(${idx})">Ver gastos</button>
-                    <button class="archive-btn" style="border-color: #00e676; color: #00e676;" onclick="exportarCSV(${idx})">📥 CSV (Excel)</button>
+                    <button class="archive-btn excel" onclick="exportarExcel(${idx})">📥 Exportar a Excel</button>
                 </div>
             `;
             container.appendChild(card);
