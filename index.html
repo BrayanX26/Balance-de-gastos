@@ -45,7 +45,7 @@
         .main-wrapper { padding: 15px; }
         .container { max-width: 100%; margin: auto; background: var(--container-bg); padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: relative; transition: background-color 0.3s ease; }
         
-        /* Ajuste de cabecera infalible: Botones a los lados, título al centro */
+        /* Ajuste de cabecera infalible */
         .header-section { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; width: 100%; }
         .menu-btn { font-size: 28px; padding: 0; margin: 0; background: none; border: none; color: var(--text-color); cursor: pointer; width: 40px; text-align: left; }
         .theme-toggle { font-size: 28px; padding: 0; margin: 0; background: none; border: none; cursor: pointer; width: 40px; text-align: right; outline: none; }
@@ -55,9 +55,9 @@
         .balance { font-size: 32px; font-weight: bold; color: #00e676; margin-top: 5px; }
         .negativo { color: #ff5252; }
         
-        label { font-weight: bold; display: block; margin-top: 15px; font-size: 14px; color: var(--label-color); transition: color 0.3s ease;}
-        input { width: 100%; padding: 12px; margin-top: 5px; border-radius: 8px; border: 1px solid var(--input-border); background: var(--input-bg); color: var(--text-color); box-sizing: border-box; font-size: 16px; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
-        input:focus { outline: none; border-color: #4db8ff; }
+        label { font-weight: bold; display: block; margin-top: 15px; font-size: 14px; color: var(--label-color); transition: color 0.3s ease; text-align: left;}
+        input, select { width: 100%; padding: 12px; margin-top: 5px; border-radius: 8px; border: 1px solid var(--input-border); background: var(--input-bg); color: var(--text-color); box-sizing: border-box; font-size: 16px; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+        input:focus, select:focus { outline: none; border-color: #4db8ff; }
         
         button { width: 100%; padding: 14px; margin-top: 20px; border-radius: 8px; border: none; background-color: #4db8ff; color: #121212; cursor: pointer; font-weight: bold; font-size: 16px; }
         button:hover { background-color: #3aa3e3; }
@@ -69,10 +69,10 @@
         .date-text { font-size: 12px; color: var(--date-color); display: block; margin-top: 2px;}
         .item-details { display: flex; flex-direction: column; flex-grow: 1;}
         .monto-text { font-weight: bold; font-size: 16px; margin-right: 15px;}
-        h3 { color: var(--header-color); transition: color 0.3s ease; }
+        h3 { color: var(--header-color); transition: color 0.3s ease; text-align: left;}
 
         /* Agrupación por días */
-        .day-header { font-size: 14px; color: #4db8ff; margin-top: 20px; margin-bottom: 5px; border-bottom: 1px solid var(--input-border); padding-bottom: 5px; text-transform: capitalize; }
+        .day-header { font-size: 14px; color: #4db8ff; margin-top: 20px; margin-bottom: 5px; border-bottom: 1px solid var(--input-border); padding-bottom: 5px; text-transform: capitalize; text-align: left; }
 
         /* Accesos Rápidos */
         .quick-access-container { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 10px; padding-top: 10px; margin-top: 0px; -ms-overflow-style: none; scrollbar-width: none; align-items: center; }
@@ -84,6 +84,14 @@
         .btn-delete-quick { position: absolute; top: -5px; right: -5px; background: #ff5252; color: white; border: none; border-radius: 50%; width: 16px; height: 16px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; margin: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.3); font-weight: bold; }
         .btn-delete { background: none; border: none; color: #ff5252; font-size: 18px; cursor: pointer; padding: 5px; margin: 0; width: auto; display: flex; align-items: center; justify-content: center; border-radius: 50%; background-color: rgba(255, 82, 82, 0.1); }
 
+        /* Categorías y Gráficas */
+        .cat-badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; color: #fff; margin-top: 4px; width: fit-content; }
+        .chart-container { display: flex; align-items: center; gap: 20px; background: var(--card-bg); padding: 20px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid #4db8ff; }
+        .pie-chart { width: 120px; height: 120px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: background 0.5s ease; }
+        .chart-legend { flex-grow: 1; display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: var(--text-color); }
+        .legend-item { display: flex; align-items: center; justify-content: space-between; }
+        .legend-color { width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 8px; flex-shrink: 0; }
+        
         /* Modales Personalizados */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-bg); z-index: 1000; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s ease; }
         .modal-overlay.show { display: flex; opacity: 1; }
@@ -113,13 +121,13 @@
         .page-section.active { display: block; }
 
         /* Diseño del Historial Archivado */
-        .archive-card { background: var(--card-bg); border-radius: 10px; padding: 15px; margin-bottom: 15px; text-align: left; border-left: 4px solid #888; position: relative; }
-        .archive-date { font-size: 16px; font-weight: bold; color: #4db8ff; margin-bottom: 10px; padding-right: 35px; }
+        .archive-card { background: var(--card-bg); border-radius: 10px; padding: 15px; margin-bottom: 15px; text-align: left; border-left: 4px solid #888; }
+        .archive-date { font-size: 16px; font-weight: bold; color: #4db8ff; }
         .archive-stats { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 10px; color: var(--text-color); }
-        .archive-btn { padding: 8px; font-size: 14px; background: transparent; border: 1px solid #4db8ff; color: #4db8ff; margin-top: 5px; }
+        .archive-btn { padding: 10px; font-size: 14px; background: transparent; border: 1px solid #4db8ff; color: #4db8ff; margin-top: 5px; flex: 1; }
         
-        /* Botón borrar archivo */
-        .btn-delete-archive { position: absolute; top: 12px; right: 12px; background: rgba(255, 82, 82, 0.1); color: #ff5252; border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background-color 0.2s ease; }
+        /* Botón borrar archivo corregido con Flexbox */
+        .btn-delete-archive { background: rgba(255, 82, 82, 0.1); color: #ff5252; border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background-color 0.2s ease; flex-shrink: 0; margin-left: 10px;}
         .btn-delete-archive:hover { background: rgba(255, 82, 82, 0.3); }
     </style>
 </head>
@@ -159,13 +167,33 @@
             <div class="quick-access-container" id="quickAccessContainer"></div>
 
             <h3 style="font-size: 18px; margin-bottom: 5px; margin-top: 20px;">Gasto Manual</h3>
-            <label for="concepto" style="margin-top: 5px;">¿En qué gastaste?</label>
-            <input type="text" id="concepto" placeholder="Ej. materiales, pase...">
+            <label for="concepto">¿En qué gastaste?</label>
+            <input type="text" id="concepto" placeholder="Ej. pase, materiales...">
+            
+            <label for="categoriaGasto">Categoría:</label>
+            <select id="categoriaGasto">
+                <option value="Comida">🌮 Comida</option>
+                <option value="Transporte">🚌 Transporte</option>
+                <option value="Escuela">🏫 Escuela (ITO)</option>
+                <option value="Proyectos">🦾 Proyecto MECÁNOVA</option>
+                <option value="Gym">🏋️‍♂️ Gym</option>
+                <option value="Entretenimiento">🎮 Hobbies (Juegos/Trombón)</option>
+                <option value="Otros" selected>📦 Otros</option>
+            </select>
+
             <label for="monto">¿Cuánto costó? ($):</label>
             <input type="number" id="monto" placeholder="Ej. 15" inputmode="decimal">
             <button onclick="agregarGasto()">Agregar Gasto</button>
 
-            <h3 style="margin-top: 30px; font-size: 18px; margin-bottom: 10px;">Historial de la Semana</h3>
+            <h3 style="margin-top: 30px; font-size: 18px; margin-bottom: 10px;">Resumen de la Semana</h3>
+            <div id="chartContainerWrapper" style="display: none;">
+                <div class="chart-container">
+                    <div class="pie-chart" id="graficaPastel"></div>
+                    <div class="chart-legend" id="graficaLeyenda"></div>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 20px; font-size: 18px; margin-bottom: 10px;">Historial de la Semana</h3>
             <div id="listaGastosGrouped"></div>
 
             <button class="btn-danger" onclick="confirmarLimpieza()">Cerrar y Archivar Semana</button>
@@ -176,9 +204,9 @@
             <div class="header-section">
                 <button class="menu-btn" onclick="openSidebar()">☰</button>
                 <h2>Historiales Pasados</h2>
-                <div style="width: 40px;"></div> <!-- Div vacío para balancear el flexbox y centrar el título -->
+                <div style="width: 40px;"></div> <!-- Div vacío para centrar título -->
             </div>
-            <p style="color: var(--label-color); font-size: 14px;">Tus semanas cerradas automáticamente o de forma manual aparecen aquí ordenadas.</p>
+            <p style="color: var(--label-color); font-size: 14px; text-align: left;">Tus semanas cerradas automáticamente o de forma manual aparecen aquí ordenadas.</p>
             <div id="archiveContainer">
                 <!-- Se llena por JS -->
             </div>
@@ -199,12 +227,26 @@
 <div class="modal-overlay" id="addQuickModal">
     <div class="modal-box">
         <h3 class="modal-title">Nuevo Acceso Rápido</h3>
-        <label for="quickEmoji" style="text-align: left; margin-top: 5px;">Emoji (opcional):</label>
+        <label for="quickEmoji">Emoji (opcional):</label>
         <input type="text" id="quickEmoji" placeholder="Ej. 🏋️‍♂️, 🦾, 🌮" maxlength="2">
-        <label for="quickName" style="text-align: left;">Nombre:</label>
+        
+        <label for="quickName">Nombre:</label>
         <input type="text" id="quickName" placeholder="Ej. Gym, Materiales...">
-        <label for="quickAmount" style="text-align: left;">Costo ($):</label>
+        
+        <label for="quickCat">Categoría:</label>
+        <select id="quickCat">
+            <option value="Comida">🌮 Comida</option>
+            <option value="Transporte">🚌 Transporte</option>
+            <option value="Escuela">🏫 Escuela (ITO)</option>
+            <option value="Proyectos">🦾 Proyecto MECÁNOVA</option>
+            <option value="Gym">🏋️‍♂️ Gym</option>
+            <option value="Entretenimiento">🎮 Hobbies (Juegos/Trombón)</option>
+            <option value="Otros" selected>📦 Otros</option>
+        </select>
+
+        <label for="quickAmount">Costo ($):</label>
         <input type="number" id="quickAmount" placeholder="Ej. 20" inputmode="decimal">
+        
         <div class="modal-actions" style="margin-top: 25px;">
             <button class="btn-modal btn-cancel" onclick="cerrarModalNuevoAcceso()">Cancelar</button>
             <button class="btn-modal btn-primary" onclick="guardarNuevoAcceso()">Guardar</button>
@@ -249,10 +291,29 @@
       navigator.serviceWorker.register('sw.js').catch(err => console.log('Error SW', err));
     }
 
+    // --- COLORES DE CATEGORÍAS ---
+    const catColors = {
+        'Comida': '#ff9800', 
+        'Transporte': '#03a9f4', 
+        'Escuela': '#9c27b0',
+        'Proyectos': '#e91e63', 
+        'Gym': '#4caf50', 
+        'Entretenimiento': '#f44336', 
+        'Otros': '#9e9e9e'
+    };
+
     // --- VARIABLES GLOBALES ---
-    let gastos = JSON.parse(localStorage.getItem('misGastos_v3')) || [];
+    let gastos = JSON.parse(localStorage.getItem('misGastos_v4')) || [];
     let ingreso = parseFloat(localStorage.getItem('miIngreso_v3')) || 0;
     
+    // Migración de v3 a v4 (agregar categoría si no tienen)
+    let oldGastos = JSON.parse(localStorage.getItem('misGastos_v3'));
+    if(oldGastos && gastos.length === 0) {
+        gastos = oldGastos.map(g => ({...g, categoria: g.categoria || 'Otros'}));
+        localStorage.setItem('misGastos_v4', JSON.stringify(gastos));
+        localStorage.removeItem('misGastos_v3');
+    }
+
     // --- CIERRE AUTOMÁTICO DE SEMANA ---
     function getMonday(d) {
         d = new Date(d);
@@ -299,7 +360,7 @@
 
     function showModal(title, message, isConfirm, onConfirmCallback, confirmText="Sí, archivar") {
         modalTitle.innerText = title;
-        modalBody.innerHTML = message; // permitimos HTML para las listas
+        modalBody.innerHTML = message; 
         modalActions.innerHTML = '';
 
         if (isConfirm) {
@@ -328,15 +389,21 @@
     }
 
     // --- ACCESOS RÁPIDOS ---
-    let accesosRapidos = JSON.parse(localStorage.getItem('misAccesos_v1'));
+    let accesosRapidos = JSON.parse(localStorage.getItem('misAccesos_v2'));
     if (!accesosRapidos) {
-        accesosRapidos = [
-            { nombre: 'Urbano', monto: 5, emoji: '🚌' },
-            { nombre: 'Halcón', monto: 10, emoji: '🦅' },
-            { nombre: 'Mototaxi', monto: 10, emoji: '🛺' },
-            { nombre: 'Comida', monto: 55, emoji: '🌮' }
-        ];
-        localStorage.setItem('misAccesos_v1', JSON.stringify(accesosRapidos));
+        // Migrar de v1 a v2 agregando categorías por defecto
+        let oldAccesos = JSON.parse(localStorage.getItem('misAccesos_v1'));
+        if(oldAccesos) {
+            accesosRapidos = oldAccesos.map(a => ({...a, categoria: (a.nombre==='Comida'?'Comida':'Transporte')}));
+        } else {
+            accesosRapidos = [
+                { nombre: 'Urbano', monto: 5, emoji: '🚌', categoria: 'Transporte' },
+                { nombre: 'Halcón', monto: 10, emoji: '🦅', categoria: 'Transporte' },
+                { nombre: 'Mototaxi', monto: 10, emoji: '🛺', categoria: 'Transporte' },
+                { nombre: 'Comida', monto: 55, emoji: '🌮', categoria: 'Comida' }
+            ];
+        }
+        localStorage.setItem('misAccesos_v2', JSON.stringify(accesosRapidos));
     }
 
     function renderAccesos() {
@@ -349,7 +416,7 @@
             btn.className = 'btn-quick';
             const icon = acceso.emoji ? `${acceso.emoji} ` : '';
             btn.innerHTML = `${icon}${acceso.nombre} ($${acceso.monto})`;
-            btn.onclick = () => agregarGastoRapido(acceso.nombre, acceso.monto);
+            btn.onclick = () => agregarGastoRapido(acceso.nombre, acceso.monto, acceso.categoria);
             const delBtn = document.createElement('button');
             delBtn.className = 'btn-delete-quick';
             delBtn.innerHTML = '×';
@@ -372,6 +439,7 @@
         document.getElementById('quickEmoji').value = '';
         document.getElementById('quickName').value = '';
         document.getElementById('quickAmount').value = '';
+        document.getElementById('quickCat').value = 'Otros';
         document.getElementById('addQuickModal').classList.add('show');
     }
     function cerrarModalNuevoAcceso() { document.getElementById('addQuickModal').classList.remove('show'); }
@@ -379,17 +447,18 @@
         const emoji = document.getElementById('quickEmoji').value.trim();
         const nombre = document.getElementById('quickName').value.trim();
         const monto = parseFloat(document.getElementById('quickAmount').value);
+        const cat = document.getElementById('quickCat').value;
         if (nombre === '' || isNaN(monto) || monto <= 0) {
             showModal('Datos incompletos', 'Ingresa un nombre y un costo.', false); return;
         }
-        accesosRapidos.push({ nombre: nombre, monto: monto, emoji: emoji });
-        localStorage.setItem('misAccesos_v1', JSON.stringify(accesosRapidos));
+        accesosRapidos.push({ nombre: nombre, monto: monto, emoji: emoji, categoria: cat });
+        localStorage.setItem('misAccesos_v2', JSON.stringify(accesosRapidos));
         renderAccesos();
         cerrarModalNuevoAcceso();
     }
     function borrarAccesoRapido(index) {
         accesosRapidos.splice(index, 1);
-        localStorage.setItem('misAccesos_v1', JSON.stringify(accesosRapidos));
+        localStorage.setItem('misAccesos_v2', JSON.stringify(accesosRapidos));
         renderAccesos();
     }
 
@@ -402,22 +471,24 @@
         actualizarUI();
     }
 
-    function agregarGastoRapido(concepto, monto) {
+    function agregarGastoRapido(concepto, monto, categoria) {
         let fecha = new Date().toLocaleDateString('es-MX', { weekday: 'long', month: 'short', day: 'numeric' });
-        gastos.unshift({concepto: concepto, monto: monto, fecha: fecha});
-        localStorage.setItem('misGastos_v3', JSON.stringify(gastos));
+        gastos.unshift({concepto: concepto, monto: monto, fecha: fecha, categoria: categoria || 'Otros'});
+        localStorage.setItem('misGastos_v4', JSON.stringify(gastos));
         actualizarUI();
     }
 
     function agregarGasto() {
         let concepto = document.getElementById('concepto').value;
         let monto = parseFloat(document.getElementById('monto').value);
+        let categoria = document.getElementById('categoriaGasto').value;
+
         if(concepto === '' || isNaN(monto) || monto <= 0) {
             showModal('Cuidado', 'Por favor pon un concepto y un costo válido.', false); return;
         }
         let fecha = new Date().toLocaleDateString('es-MX', { weekday: 'long', month: 'short', day: 'numeric' });
-        gastos.unshift({concepto: concepto, monto: monto, fecha: fecha});
-        localStorage.setItem('misGastos_v3', JSON.stringify(gastos));
+        gastos.unshift({concepto: concepto, monto: monto, fecha: fecha, categoria: categoria});
+        localStorage.setItem('misGastos_v4', JSON.stringify(gastos));
         document.getElementById('concepto').value = '';
         document.getElementById('monto').value = '';
         actualizarUI();
@@ -425,7 +496,7 @@
 
     function borrarGasto(index) {
         gastos.splice(index, 1);
-        localStorage.setItem('misGastos_v3', JSON.stringify(gastos));
+        localStorage.setItem('misGastos_v4', JSON.stringify(gastos));
         actualizarUI();
     }
 
@@ -433,14 +504,46 @@
         let totalGastos = 0;
         let container = document.getElementById('listaGastosGrouped');
         container.innerHTML = '';
+        
+        let catSums = {};
 
         const grupos = {};
         gastos.forEach((gasto, originalIndex) => {
             totalGastos += gasto.monto;
+            let cat = gasto.categoria || 'Otros';
+            catSums[cat] = (catSums[cat] || 0) + gasto.monto;
+
             if(!grupos[gasto.fecha]) grupos[gasto.fecha] = [];
             grupos[gasto.fecha].push({ ...gasto, originalIndex });
         });
 
+        // Actualizar Gráfica
+        let chartWrapper = document.getElementById('chartContainerWrapper');
+        if(gastos.length > 0) {
+            chartWrapper.style.display = 'block';
+            let chartCSS = [];
+            let currentDeg = 0;
+            let legendHTML = '';
+            for (let c in catSums) {
+                let percentage = (catSums[c] / totalGastos) * 360;
+                let color = catColors[c] || '#9e9e9e';
+                chartCSS.push(`${color} ${currentDeg}deg ${currentDeg + percentage}deg`);
+                currentDeg += percentage;
+                
+                let pctText = ((catSums[c] / totalGastos) * 100).toFixed(1);
+                legendHTML += `
+                    <div class="legend-item">
+                        <div><span class="legend-color" style="background: ${color};"></span>${c}</div>
+                        <strong>$${catSums[c].toFixed(2)} <span style="color:var(--label-color); font-weight:normal; font-size:10px;">(${pctText}%)</span></strong>
+                    </div>`;
+            }
+            document.getElementById('graficaPastel').style.background = `conic-gradient(${chartCSS.join(', ')})`;
+            document.getElementById('graficaLeyenda').innerHTML = legendHTML;
+        } else {
+            chartWrapper.style.display = 'none';
+        }
+
+        // Renderizar grupos de historial
         for (const fecha in grupos) {
             const header = document.createElement('h4');
             header.className = 'day-header';
@@ -450,9 +553,13 @@
             const ul = document.createElement('ul');
             grupos[fecha].forEach(gasto => {
                 let li = document.createElement('li');
+                let catColor = catColors[gasto.categoria || 'Otros'] || '#9e9e9e';
+                li.style.borderLeftColor = catColor;
+                
                 li.innerHTML = `
                     <div class="item-details">
                         <span>${gasto.concepto}</span>
+                        <span class="cat-badge" style="background: ${catColor}25; color: ${catColor}; border: 1px solid ${catColor}50;">${gasto.categoria || 'Otros'}</span>
                     </div>
                     <span class="monto-text">$${gasto.monto.toFixed(2)}</span>
                     <button class="btn-delete" onclick="borrarGasto(${gasto.originalIndex})" title="Borrar gasto">🗑️</button>
@@ -472,13 +579,43 @@
         balanceEl.style.color = balance < 0 ? '#ff5252' : '#00e676';
     }
 
+    // --- EXPORTAR A CSV (EXCEL) ---
+    function exportarCSV(idx) {
+        let archivo = JSON.parse(localStorage.getItem('historialArchivado_v1')) || [];
+        let semana = archivo[idx];
+        
+        // Agregar BOM para que Excel detecte acentos y ñ
+        let csvContent = "\uFEFFFecha,Concepto,Categoria,Monto\n";
+        
+        semana.gastos.forEach(g => {
+            let cat = g.categoria || 'Otros';
+            // Escapar comas en conceptos si los hay
+            let desc = g.concepto.replace(/,/g, " ");
+            csvContent += `${g.fecha},${desc},${cat},$${g.monto}\n`;
+        });
+        
+        csvContent += `\nTOTAL INGRESOS,,,$${semana.ingreso}\n`;
+        csvContent += `TOTAL GASTOS,,,$${semana.totalGastos}\n`;
+        csvContent += `BALANCE FINAL,,,$${semana.sobrante}\n`;
+
+        let blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        let url = URL.createObjectURL(blob);
+        let link = document.createElement("a");
+        link.setAttribute("href", url);
+        // Formatear nombre de archivo
+        let nombreArchivo = semana.fecha.replace(/ /g, "_").replace(/,/g, "") + "_Balance.csv";
+        link.setAttribute("download", nombreArchivo);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
     // --- ARCHIVO Y CERRAR SEMANA ---
     function archivarSemanaLocal(etiqueta = "") {
         let archivo = JSON.parse(localStorage.getItem('historialArchivado_v1')) || [];
         
         let totalGastado = gastos.reduce((sum, g) => sum + g.monto, 0);
         
-        // Calcular fechas para el título
         let fechaCierreDate = new Date();
         let fechaCierreCorto = fechaCierreDate.toLocaleDateString('es-MX', { month: 'short', day: 'numeric' });
         let fechaCierreAnio = fechaCierreDate.toLocaleDateString('es-MX', { year: 'numeric', month: 'short', day: 'numeric' });
@@ -487,7 +624,7 @@
         let fechaRango = "";
         
         if (fechaInicio === fechaCierreCorto) {
-            fechaRango = fechaCierreAnio; // Si empezó y cerró el mismo día
+            fechaRango = fechaCierreAnio; 
         } else {
             fechaRango = `Del ${fechaInicio} al ${fechaCierreAnio}`;
         }
@@ -503,12 +640,11 @@
         
         localStorage.setItem('historialArchivado_v1', JSON.stringify(archivo));
         
-        // Limpiar actual
         gastos = [];
         ingreso = 0;
-        localStorage.setItem('misGastos_v3', JSON.stringify(gastos));
+        localStorage.setItem('misGastos_v4', JSON.stringify(gastos));
         localStorage.setItem('miIngreso_v3', ingreso);
-        localStorage.removeItem('fechaInicio_v3'); // Se reinicia para la prox semana
+        localStorage.removeItem('fechaInicio_v3'); 
         
         document.getElementById('ingreso').value = '';
         actualizarUI();
@@ -537,15 +673,22 @@
             
             let card = document.createElement('div');
             card.className = 'archive-card';
+            
+            // Solución absoluta y definitiva para el diseño del bote de basura usando Flexbox
             card.innerHTML = `
-                <button class="btn-delete-archive" onclick="confirmarBorradoArchivo(${idx})" title="Borrar historial">🗑️</button>
-                <div class="archive-date">🗓️ ${semana.fecha} ${notaEtiqueta}</div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                    <div class="archive-date" style="margin-bottom: 0;">🗓️ ${semana.fecha} ${notaEtiqueta}</div>
+                    <button class="btn-delete-archive" onclick="confirmarBorradoArchivo(${idx})" title="Borrar historial" style="margin-top: -5px;">🗑️</button>
+                </div>
                 <div class="archive-stats"><span>Ingreso:</span> <strong>$${semana.ingreso.toFixed(2)}</strong></div>
                 <div class="archive-stats"><span>Gastos:</span> <strong>$${semana.totalGastos.toFixed(2)}</strong></div>
                 <div class="archive-stats" style="border-top: 1px solid var(--input-border); padding-top:5px; margin-top:5px;">
                     <span>Sobrante:</span> <strong style="color: ${colorSobrante};">$${semana.sobrante.toFixed(2)}</strong>
                 </div>
-                <button class="archive-btn" onclick="verDetallesArchivo(${idx})">Ver lista de gastos</button>
+                <div style="display: flex; gap: 10px; margin-top: 15px;">
+                    <button class="archive-btn" onclick="verDetallesArchivo(${idx})">Ver gastos</button>
+                    <button class="archive-btn" style="border-color: #00e676; color: #00e676;" onclick="exportarCSV(${idx})">📥 CSV (Excel)</button>
+                </div>
             `;
             container.appendChild(card);
         });
@@ -573,13 +716,15 @@
             listadoHTML += `<p style="text-align:center;">No hubo gastos esta semana.</p>`;
         } else {
             semana.gastos.forEach(g => {
+                let catColor = catColors[g.categoria || 'Otros'] || '#9e9e9e';
                 listadoHTML += `
-                <div style="background: var(--item-bg); margin-bottom: 10px; padding: 12px; border-radius: 10px; display:flex; justify-content:space-between; align-items:center; border-left: 4px solid #4db8ff; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+                <div style="background: var(--item-bg); margin-bottom: 10px; padding: 12px; border-radius: 10px; display:flex; justify-content:space-between; align-items:center; border-left: 4px solid ${catColor}; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
                     <div style="display:flex; flex-direction:column; gap: 4px;">
                         <span style="font-weight:bold; font-size:16px; color:var(--text-color);">${g.concepto}</span>
                         <span style="font-size:12px; color:var(--date-color);">📅 ${g.fecha}</span>
+                        <span style="font-size:10px; color:${catColor}; font-weight:bold;">${g.categoria || 'Otros'}</span>
                     </div>
-                    <div style="background: rgba(77, 184, 255, 0.15); color: #4db8ff; padding: 6px 12px; border-radius: 20px; font-weight:bold; font-size:15px;">
+                    <div style="background: ${catColor}25; color: ${catColor}; padding: 6px 12px; border-radius: 20px; font-weight:bold; font-size:15px;">
                         $${g.monto.toFixed(2)}
                     </div>
                 </div>`;
