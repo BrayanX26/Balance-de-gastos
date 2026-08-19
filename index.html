@@ -20,6 +20,8 @@
             --date-color: #888888;
             --header-color: #eee;
             --modal-bg: rgba(0, 0, 0, 0.7);
+            --sidebar-bg: #1a1a1a;
+            --sidebar-hover: #333333;
         }
 
         .light-mode {
@@ -34,14 +36,21 @@
             --date-color: #666666;
             --header-color: #333333;
             --modal-bg: rgba(0, 0, 0, 0.4);
+            --sidebar-bg: #ffffff;
+            --sidebar-hover: #f0f0f0;
         }
 
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 15px; transition: background-color 0.3s ease, color 0.3s ease; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; transition: background-color 0.3s ease, color 0.3s ease; overflow-x: hidden; }
+        
+        .main-wrapper { padding: 15px; }
         .container { max-width: 100%; margin: auto; background: var(--container-bg); padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: relative; transition: background-color 0.3s ease; }
         
         .header-section { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        h2 { color: #4db8ff; margin: 0; font-size: 24px; text-align: left; }
-        .theme-toggle { background: none; border: none; font-size: 28px; cursor: pointer; padding: 0; margin: 0; outline: none; }
+        .header-left { display: flex; align-items: center; gap: 10px; }
+        .menu-btn { background: none; border: none; color: var(--text-color); font-size: 24px; cursor: pointer; padding: 5px; display: flex; align-items: center; justify-content: center; border-radius: 5px; }
+        .menu-btn:hover { background: var(--card-bg); }
+        h2 { color: #4db8ff; margin: 0; font-size: 22px; text-align: left; }
+        .theme-toggle { background: none; border: none; font-size: 26px; cursor: pointer; padding: 0; margin: 0; outline: none; }
         
         .card { background: var(--card-bg); padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center; border-left: 4px solid #4db8ff; transition: background-color 0.3s ease;}
         .balance { font-size: 32px; font-weight: bold; color: #00e676; margin-top: 5px; }
@@ -54,26 +63,26 @@
         button { width: 100%; padding: 14px; margin-top: 20px; border-radius: 8px; border: none; background-color: #4db8ff; color: #121212; cursor: pointer; font-weight: bold; font-size: 16px; }
         button:hover { background-color: #3aa3e3; }
         .btn-danger { background-color: transparent; border: 1px solid #ff5252; color: #ff5252; margin-top: 30px; }
-        .btn-danger:hover { background-color: #331414; }
+        .btn-danger:hover { background-color: rgba(255, 82, 82, 0.1); }
         
-        ul { list-style-type: none; padding: 0; margin-top: 10px;}
+        ul { list-style-type: none; padding: 0; margin-top: 5px;}
         li { background: var(--item-bg); margin-top: 8px; padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid #ff5252; transition: background-color 0.3s ease;}
         .date-text { font-size: 12px; color: var(--date-color); display: block; margin-top: 2px;}
         .item-details { display: flex; flex-direction: column; flex-grow: 1;}
         .monto-text { font-weight: bold; font-size: 16px; margin-right: 15px;}
         h3 { color: var(--header-color); transition: color 0.3s ease; }
 
+        /* Agrupación por días */
+        .day-header { font-size: 14px; color: #4db8ff; margin-top: 20px; margin-bottom: 5px; border-bottom: 1px solid var(--input-border); padding-bottom: 5px; text-transform: capitalize; }
+
         /* Accesos Rápidos */
         .quick-access-container { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 10px; padding-top: 10px; margin-top: 0px; -ms-overflow-style: none; scrollbar-width: none; align-items: center; }
         .quick-access-container::-webkit-scrollbar { display: none; }
-        
         .quick-wrapper { position: relative; display: inline-block; flex-shrink: 0; }
         .btn-quick { background-color: var(--card-bg); border: 1px solid #4db8ff; color: var(--text-color); padding: 8px 12px; border-radius: 20px; white-space: nowrap; font-size: 14px; margin-top: 0; width: auto; transition: all 0.2s ease; }
         .btn-quick:hover { background-color: #4db8ff; color: #121212; }
         .btn-add-quick { background-color: transparent; border: 1px dashed #4db8ff; color: #4db8ff; }
-        
-        .btn-delete-quick { position: absolute; top: -5px; right: -5px; background: #ff5252; color: white; border: none; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; margin: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.3); font-weight: bold; }
-        
+        .btn-delete-quick { position: absolute; top: -5px; right: -5px; background: #ff5252; color: white; border: none; border-radius: 50%; width: 16px; height: 16px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; margin: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.3); font-weight: bold; }
         .btn-delete { background: none; border: none; color: #ff5252; font-size: 18px; cursor: pointer; padding: 5px; margin: 0; width: auto; display: flex; align-items: center; justify-content: center; border-radius: 50%; background-color: rgba(255, 82, 82, 0.1); }
 
         /* Modales Personalizados */
@@ -88,67 +97,114 @@
         .btn-cancel { background: var(--card-bg); color: var(--text-color); border: 1px solid var(--input-border); }
         .btn-confirm { background: #ff5252; color: white; }
         .btn-primary { background: #4db8ff; color: #121212; }
+
+        /* SIDEBAR (Menú lateral) */
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-bg); z-index: 2000; opacity: 0; transition: opacity 0.3s ease; }
+        .sidebar-overlay.show { display: block; opacity: 1; }
+        .sidebar { position: fixed; top: 0; left: -280px; width: 260px; height: 100%; background: var(--sidebar-bg); z-index: 2001; transition: left 0.3s ease; box-shadow: 2px 0 15px rgba(0,0,0,0.5); display: flex; flex-direction: column; }
+        .sidebar.open { left: 0; }
+        .sidebar-header { padding: 20px; border-bottom: 1px solid var(--input-border); }
+        .sidebar-header h3 { margin: 0; color: #4db8ff; font-size: 20px; }
+        .sidebar-menu { list-style: none; padding: 0; margin: 0; flex-grow: 1; overflow-y: auto; }
+        .sidebar-menu li { padding: 15px 20px; border-bottom: 1px solid var(--input-border); color: var(--text-color); cursor: pointer; display: flex; align-items: center; gap: 10px; font-weight: bold; }
+        .sidebar-menu li:hover { background: var(--sidebar-hover); }
+        
+        /* Secciones */
+        .page-section { display: none; }
+        .page-section.active { display: block; }
+
+        /* Diseño del Historial Archivado */
+        .archive-card { background: var(--card-bg); border-radius: 10px; padding: 15px; margin-bottom: 15px; text-align: left; border-left: 4px solid #888; }
+        .archive-date { font-size: 16px; font-weight: bold; color: #4db8ff; margin-bottom: 10px; }
+        .archive-stats { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 10px; color: var(--text-color); }
+        .archive-btn { padding: 8px; font-size: 14px; background: transparent; border: 1px solid #4db8ff; color: #4db8ff; margin-top: 5px; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header-section">
-        <h2>Control de Gastos</h2>
-        <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()">⛅</button>
+<!-- Menú Lateral -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <h3>App Balance</h3>
     </div>
-    
-    <div class="card">
-        <label for="ingreso">¿Cuánto te dieron para la semana? ($):</label>
-        <input type="number" id="ingreso" placeholder="Ej. 600" onchange="guardarIngreso()" inputmode="decimal">
-        <p style="margin-bottom: 0; font-size: 14px; margin-top: 15px; color: var(--label-color);">Balance Disponible:</p>
-        <div class="balance" id="balanceText">$0.00</div>
-    </div>
-
-    <h3 style="font-size: 18px; margin-bottom: 5px;">Accesos Rápidos</h3>
-    <div class="quick-access-container" id="quickAccessContainer">
-        <!-- Se llenan por JS -->
-    </div>
-
-    <h3 style="font-size: 18px; margin-bottom: 5px; margin-top: 20px;">Gasto Manual</h3>
-    <label for="concepto" style="margin-top: 5px;">¿En qué gastaste?</label>
-    <input type="text" id="concepto" placeholder="Ej. materiales, pase...">
-    
-    <label for="monto">¿Cuánto costó? ($):</label>
-    <input type="number" id="monto" placeholder="Ej. 15" inputmode="decimal">
-    
-    <button onclick="agregarGasto()">Agregar Gasto</button>
-
-    <h3 style="margin-top: 30px; font-size: 18px; margin-bottom: 10px;">Historial de la Semana</h3>
-    <ul id="listaGastos"></ul>
-
-    <button class="btn-danger" onclick="confirmarLimpieza()">Terminar Semana (Borrar historial)</button>
+    <ul class="sidebar-menu">
+        <li onclick="navigate('dashboard')">🏠 Semana Actual</li>
+        <li onclick="navigate('archive')">📂 Historial de Semanas</li>
+    </ul>
 </div>
 
-<!-- Modal General (Alertas y Confirmaciones) -->
+<div class="main-wrapper">
+    <div class="container">
+        
+        <!-- PANTALLA 1: SEMANA ACTUAL -->
+        <div id="view-dashboard" class="page-section active">
+            <div class="header-section">
+                <div class="header-left">
+                    <button class="menu-btn" onclick="openSidebar()">☰</button>
+                    <h2>Control de Gastos</h2>
+                </div>
+                <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()">⛅</button>
+            </div>
+            
+            <div class="card">
+                <label for="ingreso">¿Cuánto te dieron para la semana? ($):</label>
+                <input type="number" id="ingreso" placeholder="Ej. 600" onchange="guardarIngreso()" inputmode="decimal">
+                <p style="margin-bottom: 0; font-size: 14px; margin-top: 15px; color: var(--label-color);">Balance Disponible:</p>
+                <div class="balance" id="balanceText">$0.00</div>
+            </div>
+
+            <h3 style="font-size: 18px; margin-bottom: 5px;">Accesos Rápidos</h3>
+            <div class="quick-access-container" id="quickAccessContainer"></div>
+
+            <h3 style="font-size: 18px; margin-bottom: 5px; margin-top: 20px;">Gasto Manual</h3>
+            <label for="concepto" style="margin-top: 5px;">¿En qué gastaste?</label>
+            <input type="text" id="concepto" placeholder="Ej. materiales, pase...">
+            <label for="monto">¿Cuánto costó? ($):</label>
+            <input type="number" id="monto" placeholder="Ej. 15" inputmode="decimal">
+            <button onclick="agregarGasto()">Agregar Gasto</button>
+
+            <h3 style="margin-top: 30px; font-size: 18px; margin-bottom: 10px;">Historial de la Semana</h3>
+            <div id="listaGastosGrouped"></div>
+
+            <button class="btn-danger" onclick="confirmarLimpieza()">Cerrar y Archivar Semana</button>
+        </div>
+
+        <!-- PANTALLA 2: HISTORIAL ARCHIVADO -->
+        <div id="view-archive" class="page-section">
+            <div class="header-section">
+                <div class="header-left">
+                    <button class="menu-btn" onclick="openSidebar()">☰</button>
+                    <h2>Historiales Pasados</h2>
+                </div>
+            </div>
+            <p style="color: var(--label-color); font-size: 14px;">Tus semanas cerradas automáticamente o de forma manual aparecen aquí ordenadas.</p>
+            <div id="archiveContainer">
+                <!-- Se llena por JS -->
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modales -->
 <div class="modal-overlay" id="customModal">
     <div class="modal-box">
         <h3 class="modal-title" id="modalTitle">Mensaje</h3>
         <div class="modal-body" id="modalBody">Contenido</div>
-        <div class="modal-actions" id="modalActions">
-            <!-- Botones inyectados por JS -->
-        </div>
+        <div class="modal-actions" id="modalActions"></div>
     </div>
 </div>
 
-<!-- Modal para Nuevo Acceso Rápido -->
 <div class="modal-overlay" id="addQuickModal">
     <div class="modal-box">
         <h3 class="modal-title">Nuevo Acceso Rápido</h3>
         <label for="quickEmoji" style="text-align: left; margin-top: 5px;">Emoji (opcional):</label>
         <input type="text" id="quickEmoji" placeholder="Ej. 🏋️‍♂️, 🦾, 🌮" maxlength="2">
-        
         <label for="quickName" style="text-align: left;">Nombre:</label>
         <input type="text" id="quickName" placeholder="Ej. Gym, Materiales...">
-        
         <label for="quickAmount" style="text-align: left;">Costo ($):</label>
         <input type="number" id="quickAmount" placeholder="Ej. 20" inputmode="decimal">
-        
         <div class="modal-actions" style="margin-top: 25px;">
             <button class="btn-modal btn-cancel" onclick="cerrarModalNuevoAcceso()">Cancelar</button>
             <button class="btn-modal btn-primary" onclick="guardarNuevoAcceso()">Guardar</button>
@@ -165,11 +221,11 @@
     function applyTheme() {
         if (isLightMode) {
             document.body.classList.add('light-mode');
-            themeBtn.innerText = '🌙'; 
+            if(themeBtn) themeBtn.innerText = '🌙'; 
             themeMeta.setAttribute('content', '#f4f7f6');
         } else {
             document.body.classList.remove('light-mode');
-            themeBtn.innerText = '⛅'; 
+            if(themeBtn) themeBtn.innerText = '⛅'; 
             themeMeta.setAttribute('content', '#121212');
         }
     }
@@ -183,16 +239,60 @@
 
     // --- SERVICE WORKER ---
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').catch(err => console.log('Error en SW', err));
+      navigator.serviceWorker.register('sw.js').catch(err => console.log('Error SW', err));
     }
 
-    // --- MODALES PERSONALIZADOS ---
+    // --- VARIABLES GLOBALES ---
+    let gastos = JSON.parse(localStorage.getItem('misGastos_v3')) || [];
+    let ingreso = parseFloat(localStorage.getItem('miIngreso_v3')) || 0;
+    
+    // --- CIERRE AUTOMÁTICO DE SEMANA ---
+    function getMonday(d) {
+        d = new Date(d);
+        var day = d.getDay(), diff = d.getDate() - day + (day == 0 ? -6 : 1);
+        return new Date(d.setDate(diff)).setHours(0,0,0,0);
+    }
+
+    function checkAutoClose() {
+        let savedMonday = localStorage.getItem('currentMonday_v1');
+        let actualMonday = getMonday(new Date());
+
+        if (!savedMonday) {
+            // Primera vez usando la app con esta función
+            localStorage.setItem('currentMonday_v1', actualMonday);
+        } else if (actualMonday > parseInt(savedMonday)) {
+            // Pasó a una nueva semana! Cerramos la anterior automáticamente si tiene datos
+            if(gastos.length > 0 || ingreso > 0) {
+                archivarSemanaLocal("Cierre Automático");
+            }
+            localStorage.setItem('currentMonday_v1', actualMonday);
+        }
+    }
+
+    // --- NAVEGACIÓN Y SIDEBAR ---
+    function openSidebar() {
+        document.getElementById('sidebar').classList.add('open');
+        document.getElementById('sidebarOverlay').classList.add('show');
+    }
+    function closeSidebar() {
+        document.getElementById('sidebar').classList.remove('open');
+        document.getElementById('sidebarOverlay').classList.remove('show');
+    }
+    function navigate(view) {
+        document.getElementById('view-dashboard').classList.remove('active');
+        document.getElementById('view-archive').classList.remove('active');
+        document.getElementById('view-' + view).classList.add('active');
+        closeSidebar();
+        if(view === 'archive') renderArchive();
+    }
+
+    // --- MODALES ---
     const customModal = document.getElementById('customModal');
     const modalTitle = document.getElementById('modalTitle');
     const modalBody = document.getElementById('modalBody');
     const modalActions = document.getElementById('modalActions');
 
-    function showModal(title, message, isConfirm, onConfirmCallback) {
+    function showModal(title, message, isConfirm, onConfirmCallback, confirmText="Sí, archivar") {
         modalTitle.innerText = title;
         modalBody.innerText = message;
         modalActions.innerHTML = '';
@@ -205,12 +305,11 @@
             
             const btnOk = document.createElement('button');
             btnOk.className = 'btn-modal btn-confirm';
-            btnOk.innerText = 'Sí, borrar todo';
+            btnOk.innerText = confirmText;
             btnOk.onclick = () => {
                 customModal.classList.remove('show');
                 if(onConfirmCallback) onConfirmCallback();
             };
-            
             modalActions.appendChild(btnCancel);
             modalActions.appendChild(btnOk);
         } else {
@@ -220,15 +319,10 @@
             btnOk.onclick = () => { customModal.classList.remove('show'); };
             modalActions.appendChild(btnOk);
         }
-
         customModal.classList.add('show');
     }
 
-    // --- LÓGICA DE LA APLICACIÓN ---
-    let gastos = JSON.parse(localStorage.getItem('misGastos_v3')) || [];
-    let ingreso = parseFloat(localStorage.getItem('miIngreso_v3')) || 0;
-    
-    // Accesos rápidos por defecto si no hay guardados
+    // --- ACCESOS RÁPIDOS ---
     let accesosRapidos = JSON.parse(localStorage.getItem('misAccesos_v1'));
     if (!accesosRapidos) {
         accesosRapidos = [
@@ -240,41 +334,25 @@
         localStorage.setItem('misAccesos_v1', JSON.stringify(accesosRapidos));
     }
 
-    document.getElementById('ingreso').value = ingreso || '';
-
-    function guardarIngreso() {
-        ingreso = parseFloat(document.getElementById('ingreso').value) || 0;
-        localStorage.setItem('miIngreso_v3', ingreso);
-        actualizarUI();
-    }
-
-    // --- ACCESOS RÁPIDOS DINÁMICOS ---
     function renderAccesos() {
         const container = document.getElementById('quickAccessContainer');
         container.innerHTML = '';
-
         accesosRapidos.forEach((acceso, index) => {
             const wrapper = document.createElement('div');
             wrapper.className = 'quick-wrapper';
-
             const btn = document.createElement('button');
             btn.className = 'btn-quick';
             const icon = acceso.emoji ? `${acceso.emoji} ` : '';
             btn.innerHTML = `${icon}${acceso.nombre} ($${acceso.monto})`;
             btn.onclick = () => agregarGastoRapido(acceso.nombre, acceso.monto);
-
             const delBtn = document.createElement('button');
             delBtn.className = 'btn-delete-quick';
             delBtn.innerHTML = '×';
-            delBtn.title = "Borrar acceso rápido";
             delBtn.onclick = () => borrarAccesoRapido(index);
-
             wrapper.appendChild(btn);
             wrapper.appendChild(delBtn);
             container.appendChild(wrapper);
         });
-
-        // Botón para agregar nuevos
         const wrapperAdd = document.createElement('div');
         wrapperAdd.className = 'quick-wrapper';
         const addBtn = document.createElement('button');
@@ -291,36 +369,36 @@
         document.getElementById('quickAmount').value = '';
         document.getElementById('addQuickModal').classList.add('show');
     }
-
-    function cerrarModalNuevoAcceso() {
-        document.getElementById('addQuickModal').classList.remove('show');
-    }
-
+    function cerrarModalNuevoAcceso() { document.getElementById('addQuickModal').classList.remove('show'); }
     function guardarNuevoAcceso() {
         const emoji = document.getElementById('quickEmoji').value.trim();
         const nombre = document.getElementById('quickName').value.trim();
         const monto = parseFloat(document.getElementById('quickAmount').value);
-
         if (nombre === '' || isNaN(monto) || monto <= 0) {
-            showModal('Datos incompletos', 'Por favor ingresa un nombre y un costo válido para el acceso rápido.', false);
-            return;
+            showModal('Datos incompletos', 'Ingresa un nombre y un costo.', false); return;
         }
-
         accesosRapidos.push({ nombre: nombre, monto: monto, emoji: emoji });
         localStorage.setItem('misAccesos_v1', JSON.stringify(accesosRapidos));
         renderAccesos();
         cerrarModalNuevoAcceso();
     }
-
     function borrarAccesoRapido(index) {
         accesosRapidos.splice(index, 1);
         localStorage.setItem('misAccesos_v1', JSON.stringify(accesosRapidos));
         renderAccesos();
     }
 
-    // --- GASTOS ---
+    // --- GASTOS E INTERFAZ AGRUPADA ---
+    document.getElementById('ingreso').value = ingreso || '';
+
+    function guardarIngreso() {
+        ingreso = parseFloat(document.getElementById('ingreso').value) || 0;
+        localStorage.setItem('miIngreso_v3', ingreso);
+        actualizarUI();
+    }
+
     function agregarGastoRapido(concepto, monto) {
-        let fecha = new Date().toLocaleDateString('es-MX', { weekday: 'short', month: 'short', day: 'numeric' });
+        let fecha = new Date().toLocaleDateString('es-MX', { weekday: 'long', month: 'short', day: 'numeric' });
         gastos.unshift({concepto: concepto, monto: monto, fecha: fecha});
         localStorage.setItem('misGastos_v3', JSON.stringify(gastos));
         actualizarUI();
@@ -329,17 +407,12 @@
     function agregarGasto() {
         let concepto = document.getElementById('concepto').value;
         let monto = parseFloat(document.getElementById('monto').value);
-
         if(concepto === '' || isNaN(monto) || monto <= 0) {
-            showModal('Cuidado', 'Por favor pon un concepto y un costo válido.', false);
-            return;
+            showModal('Cuidado', 'Por favor pon un concepto y un costo válido.', false); return;
         }
-
-        let fecha = new Date().toLocaleDateString('es-MX', { weekday: 'short', month: 'short', day: 'numeric' });
-
+        let fecha = new Date().toLocaleDateString('es-MX', { weekday: 'long', month: 'short', day: 'numeric' });
         gastos.unshift({concepto: concepto, monto: monto, fecha: fecha});
         localStorage.setItem('misGastos_v3', JSON.stringify(gastos));
-
         document.getElementById('concepto').value = '';
         document.getElementById('monto').value = '';
         actualizarUI();
@@ -353,42 +426,134 @@
 
     function actualizarUI() {
         let totalGastos = 0;
-        let lista = document.getElementById('listaGastos');
-        lista.innerHTML = '';
+        let container = document.getElementById('listaGastosGrouped');
+        container.innerHTML = '';
 
-        gastos.forEach((gasto, index) => {
+        // Agrupar gastos por fecha
+        const grupos = {};
+        gastos.forEach((gasto, originalIndex) => {
             totalGastos += gasto.monto;
-            let li = document.createElement('li');
-            li.innerHTML = `
-                <div class="item-details">
-                    <span>${gasto.concepto}</span>
-                    <span class="date-text">${gasto.fecha}</span>
-                </div>
-                <span class="monto-text">$${gasto.monto.toFixed(2)}</span>
-                <button class="btn-delete" onclick="borrarGasto(${index})" title="Borrar gasto">🗑️</button>
-            `;
-            lista.appendChild(li);
+            if(!grupos[gasto.fecha]) grupos[gasto.fecha] = [];
+            grupos[gasto.fecha].push({ ...gasto, originalIndex });
         });
+
+        // Renderizar grupos
+        for (const fecha in grupos) {
+            const header = document.createElement('h4');
+            header.className = 'day-header';
+            header.innerText = fecha;
+            container.appendChild(header);
+
+            const ul = document.createElement('ul');
+            grupos[fecha].forEach(gasto => {
+                let li = document.createElement('li');
+                li.innerHTML = `
+                    <div class="item-details">
+                        <span>${gasto.concepto}</span>
+                    </div>
+                    <span class="monto-text">$${gasto.monto.toFixed(2)}</span>
+                    <button class="btn-delete" onclick="borrarGasto(${gasto.originalIndex})" title="Borrar gasto">🗑️</button>
+                `;
+                ul.appendChild(li);
+            });
+            container.appendChild(ul);
+        }
+
+        if(gastos.length === 0) {
+            container.innerHTML = '<p style="color: var(--label-color); font-size:14px; text-align:center;">Aún no hay gastos registrados.</p>';
+        }
 
         let balance = ingreso - totalGastos;
         let balanceEl = document.getElementById('balanceText');
         balanceEl.innerText = `$${balance.toFixed(2)}`;
+        balanceEl.style.color = balance < 0 ? '#ff5252' : '#00e676';
+    }
+
+    // --- ARCHIVO Y CERRAR SEMANA ---
+    function archivarSemanaLocal(etiqueta = "") {
+        let archivo = JSON.parse(localStorage.getItem('historialArchivado_v1')) || [];
         
-        if(balance < 0) {
-            balanceEl.style.color = '#ff5252';
-        } else {
-            balanceEl.style.color = '#00e676';
-        }
+        let totalGastado = gastos.reduce((sum, g) => sum + g.monto, 0);
+        let fechaCierre = new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'short', day: 'numeric' });
+        
+        archivo.unshift({
+            fecha: fechaCierre,
+            etiqueta: etiqueta,
+            ingreso: ingreso,
+            totalGastos: totalGastado,
+            sobrante: ingreso - totalGastado,
+            gastos: [...gastos] 
+        });
+        
+        localStorage.setItem('historialArchivado_v1', JSON.stringify(archivo));
+        
+        // Limpiar actual
+        gastos = [];
+        ingreso = 0;
+        localStorage.setItem('misGastos_v3', JSON.stringify(gastos));
+        localStorage.setItem('miIngreso_v3', ingreso);
+        document.getElementById('ingreso').value = '';
+        actualizarUI();
     }
 
     function confirmarLimpieza() {
-        showModal('Terminar Semana', '¿Seguro que quieres borrar todo para empezar una nueva semana en blanco?', true, () => {
-            gastos = [];
-            localStorage.removeItem('misGastos_v3');
-            actualizarUI();
+        showModal('Cerrar Semana', '¿Guardar esta semana en tu historial y poner todo en cero?', true, () => {
+            archivarSemanaLocal("Cierre Manual");
+            navigate('archive');
+        }, "Cerrar y archivar");
+    }
+
+    function renderArchive() {
+        const container = document.getElementById('archiveContainer');
+        container.innerHTML = '';
+        let archivo = JSON.parse(localStorage.getItem('historialArchivado_v1')) || [];
+
+        if(archivo.length === 0) {
+            container.innerHTML = '<p style="color: var(--label-color); text-align:center;">No tienes semanas archivadas todavía.</p>';
+            return;
+        }
+
+        archivo.forEach((semana, idx) => {
+            let colorSobrante = semana.sobrante < 0 ? '#ff5252' : '#00e676';
+            let notaEtiqueta = semana.etiqueta ? ` <span style="font-size:12px; font-weight:normal; color:#888;">(${semana.etiqueta})</span>` : '';
+            
+            let card = document.createElement('div');
+            card.className = 'archive-card';
+            card.innerHTML = `
+                <div class="archive-date">Semana cerrada: ${semana.fecha} ${notaEtiqueta}</div>
+                <div class="archive-stats"><span>Ingreso:</span> <strong>$${semana.ingreso.toFixed(2)}</strong></div>
+                <div class="archive-stats"><span>Gastos:</span> <strong>$${semana.totalGastos.toFixed(2)}</strong></div>
+                <div class="archive-stats" style="border-top: 1px solid var(--input-border); padding-top:5px; margin-top:5px;">
+                    <span>Sobrante:</span> <strong style="color: ${colorSobrante};">$${semana.sobrante.toFixed(2)}</strong>
+                </div>
+                <button class="archive-btn" onclick="verDetallesArchivo(${idx})">Ver lista de gastos</button>
+            `;
+            container.appendChild(card);
         });
     }
 
+    function verDetallesArchivo(idx) {
+        let archivo = JSON.parse(localStorage.getItem('historialArchivado_v1')) || [];
+        let semana = archivo[idx];
+        
+        let listadoHTML = `<div style="max-height: 250px; overflow-y: auto; text-align: left; padding: 10px; background: var(--input-bg); border-radius: 8px;">`;
+        if(semana.gastos.length === 0) {
+            listadoHTML += `<p style="text-align:center;">No hubo gastos esta semana.</p>`;
+        } else {
+            semana.gastos.forEach(g => {
+                listadoHTML += `<div style="border-bottom: 1px solid var(--input-border); padding: 5px 0; display:flex; justify-content:space-between;">
+                    <span>${g.concepto} <br><small style="color:var(--date-color);">${g.fecha}</small></span>
+                    <strong>$${g.monto}</strong>
+                </div>`;
+            });
+        }
+        listadoHTML += `</div>`;
+        showModal(`Gastos del ${semana.fecha}`, listadoHTML, false);
+        document.getElementById('modalBody').innerHTML = listadoHTML; // forzar HTML
+    }
+
+    // Inicializar
+    checkAutoClose();
     actualizarUI();
     renderAccesos();
 </script>
