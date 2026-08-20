@@ -45,7 +45,7 @@
         .main-wrapper { padding: 15px; }
         .container { max-width: 100%; margin: auto; background: var(--container-bg); padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: relative; transition: background-color 0.3s ease; }
         
-        /* Ajuste de cabecera infalible */
+        /* Ajuste de cabecera */
         .header-section { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; width: 100%; }
         .menu-btn { font-size: 28px; padding: 0; margin: 0; background: none; border: none; color: var(--text-color); cursor: pointer; width: 40px; text-align: left; }
         .theme-toggle { font-size: 28px; padding: 0; margin: 0; background: none; border: none; cursor: pointer; width: 40px; text-align: right; outline: none; }
@@ -236,7 +236,7 @@
             <button class="btn-danger" onclick="confirmarLimpieza()">Cerrar y Archivar Semana</button>
         </div>
 
-        <!-- PANTALLA 4: FINANZAS EXTRA (ALCANCIA Y PRESTAMOS) -->
+        <!-- PANTALLA 4: FINANZAS EXTRA -->
         <div id="view-finance" class="page-section">
             <div class="header-section">
                 <button class="menu-btn" onclick="openSidebar()">☰</button>
@@ -248,7 +248,10 @@
             <div class="card" style="text-align: left; border-left-color: #ff9800;">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <h3 style="margin: 0; color: #ff9800;">🐖 Mi Alcancía</h3>
-                    <button onclick="abrirModalConfigAlcancia()" style="width:auto; padding:5px 10px; margin:0; font-size:12px; background:var(--card-bg); border:1px solid #ff9800; color:#ff9800;">⚙️ Ajustar</button>
+                    <div>
+                        <button id="btnBorrarAlcancia" onclick="borrarAlcancia()" style="display:none; width:auto; padding:5px 10px; margin:0 5px 0 0; font-size:12px; background:var(--card-bg); border:1px solid #ff5252; color:#ff5252;">🗑️ Romper</button>
+                        <button onclick="abrirModalConfigAlcancia()" style="width:auto; padding:5px 10px; margin:0; font-size:12px; background:var(--card-bg); border:1px solid #ff9800; color:#ff9800;">⚙️ Ajustar</button>
+                    </div>
                 </div>
                 <div id="alcanciaDisplay" style="margin-top:15px;">
                     <!-- Se llena por JS -->
@@ -312,7 +315,7 @@
     </div>
 </div>
 
-<!-- Modales Varios -->
+<!-- Modales Universales (¡AQUÍ ESTÁN DE VUELTA!) -->
 <div class="modal-overlay" id="customModal">
     <div class="modal-box">
         <h3 class="modal-title" id="modalTitle">Mensaje</h3>
@@ -321,6 +324,7 @@
     </div>
 </div>
 
+<!-- Modal Accesos Rápidos -->
 <div class="modal-overlay" id="addQuickModal">
     <div class="modal-box">
         <h3 class="modal-title">Nuevo Acceso Rápido</h3>
@@ -386,7 +390,7 @@
         <input type="number" id="abonoMonto" placeholder="Ej. 50" inputmode="decimal">
         <div style="text-align:left; margin-top:15px; display:flex; align-items:center;">
             <input type="checkbox" id="descontarBalance" checked>
-            <label for="descontarBalance" style="margin:0; font-weight:normal; font-size:13px;">Descontar este dinero del balance de mi semana actual</label>
+            <label for="descontarBalance" style="margin:0; font-weight:normal; font-size:13px;">Descontar de mi semana actual</label>
         </div>
         <div class="modal-actions" style="margin-top: 25px;">
             <button class="btn-modal btn-cancel" onclick="cerrarModal('modalAbonarAlcancia')">Cancelar</button>
@@ -407,7 +411,7 @@
         <label for="prestamoPersona">¿A quién o de quién?</label>
         <input type="text" id="prestamoPersona" placeholder="Ej. Juan, Papá...">
         <label for="prestamoConcepto">Concepto / Motivo:</label>
-        <input type="text" id="prestamoConcepto" placeholder="Ej. Copias de Suelos, Pasaje...">
+        <input type="text" id="prestamoConcepto" placeholder="Ej. Copias, Pasaje...">
         <label for="prestamoMonto">Monto ($):</label>
         <input type="number" id="prestamoMonto" placeholder="Ej. 50" inputmode="decimal">
         <div class="modal-actions" style="margin-top: 25px;">
@@ -442,7 +446,7 @@
     }
     applyTheme(); 
 
-    // --- VARIABLES GLOBALES ---
+    // --- VARIABLES GLOBALES (Completas) ---
     let fechaInicioSemana = localStorage.getItem('fechaInicio_v3');
     if (!fechaInicioSemana) {
         fechaInicioSemana = new Date().toLocaleDateString('es-MX', { month: 'short', day: 'numeric' });
@@ -454,12 +458,42 @@
     let gastos = JSON.parse(localStorage.getItem('misGastos_v4')) || [];
     let ingreso = parseFloat(localStorage.getItem('miIngreso_v3')) || 0;
     
-    // Nuevas variables Finanzas
     let ingresosExtra = JSON.parse(localStorage.getItem('misIngresosExtra_v1')) || [];
     let alcancia = JSON.parse(localStorage.getItem('miAlcancia_v1')) || { nombre: '', meta: 0, actual: 0 };
     let prestamos = JSON.parse(localStorage.getItem('misPrestamos_v1')) || [];
+    
+    // (¡AQUÍ ESTÁ TU VARIABLE VITAL DE ACCESOS RÁPIDOS!)
+    let accesosRapidos = JSON.parse(localStorage.getItem('misAccesos_v2'));
+    if (!accesosRapidos) {
+        accesosRapidos = [
+            { nombre: 'Urbano', monto: 5, emoji: '🚌', categoria: 'Transporte' },
+            { nombre: 'Halcón', monto: 10, emoji: '🦅', categoria: 'Transporte' },
+            { nombre: 'Mototaxi', monto: 10, emoji: '🛺', categoria: 'Transporte' },
+            { nombre: 'Comida', monto: 55, emoji: '🌮', categoria: 'Comida' }
+        ];
+        localStorage.setItem('misAccesos_v2', JSON.stringify(accesosRapidos));
+    }
 
-    // --- NAVEGACIÓN ---
+    // --- CEREBRO DE AUTO-CIERRE ---
+    function getMonday(d) {
+        d = new Date(d);
+        var day = d.getDay(), diff = d.getDate() - day + (day == 0 ? -6 : 1);
+        return new Date(d.setDate(diff)).setHours(0,0,0,0);
+    }
+    function checkAutoClose() {
+        let savedMonday = localStorage.getItem('currentMonday_v1');
+        let actualMonday = getMonday(new Date());
+        if (!savedMonday) {
+            localStorage.setItem('currentMonday_v1', actualMonday);
+        } else if (actualMonday > parseInt(savedMonday)) {
+            if(gastos.length > 0 || ingreso > 0 || ingresosExtra.length > 0) {
+                archivarSemanaLocal("Cierre Automático");
+            }
+            localStorage.setItem('currentMonday_v1', actualMonday);
+        }
+    }
+
+    // --- NAVEGACIÓN Y MODALES GENÉRICOS ---
     function openSidebar() {
         document.getElementById('sidebar').classList.add('open');
         document.getElementById('sidebarOverlay').classList.add('show');
@@ -476,6 +510,40 @@
         if(view === 'finance') renderFinanzasExtra();
     }
 
+    const customModal = document.getElementById('customModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+    const modalActions = document.getElementById('modalActions');
+
+    function showModal(title, message, isConfirm, onConfirmCallback, confirmText="Sí, archivar") {
+        modalTitle.innerText = title;
+        modalBody.innerHTML = message; 
+        modalActions.innerHTML = '';
+
+        if (isConfirm) {
+            const btnCancel = document.createElement('button');
+            btnCancel.className = 'btn-modal btn-cancel';
+            btnCancel.innerText = 'Cancelar';
+            btnCancel.onclick = () => { customModal.classList.remove('show'); };
+            
+            const btnOk = document.createElement('button');
+            btnOk.className = 'btn-modal btn-confirm';
+            btnOk.innerText = confirmText;
+            btnOk.onclick = () => {
+                customModal.classList.remove('show');
+                if(onConfirmCallback) onConfirmCallback();
+            };
+            modalActions.appendChild(btnCancel);
+            modalActions.appendChild(btnOk);
+        } else {
+            const btnOk = document.createElement('button');
+            btnOk.className = 'btn-modal btn-primary';
+            btnOk.innerText = 'Entendido';
+            btnOk.onclick = () => { customModal.classList.remove('show'); };
+            modalActions.appendChild(btnOk);
+        }
+        customModal.classList.add('show');
+    }
     function cerrarModal(id) { document.getElementById(id).classList.remove('show'); }
 
     // --- INGRESOS EXTRA ---
@@ -488,8 +556,10 @@
     function guardarIngresoExtra() {
         let c = document.getElementById('extraConcepto').value.trim();
         let m = parseFloat(document.getElementById('extraMonto').value);
-        if(c === '' || isNaN(m) || m <= 0) { alert('Llena bien los datos'); return; }
-        
+        if(c === '' || isNaN(m) || m <= 0) { 
+            showModal('Datos incompletos', 'Por favor llena bien los datos.', false); 
+            return; 
+        }
         ingresosExtra.push({ concepto: c, monto: m });
         localStorage.setItem('misIngresosExtra_v1', JSON.stringify(ingresosExtra));
         cerrarModal('modalIngresoExtra');
@@ -522,7 +592,10 @@
         let monto = parseFloat(document.getElementById('monto').value);
         let categoria = document.getElementById('categoriaGasto').value;
 
-        if(concepto === '' || isNaN(monto) || monto <= 0) { alert('Faltan datos'); return; }
+        if(concepto === '' || isNaN(monto) || monto <= 0) { 
+            showModal('Cuidado', 'Por favor pon un concepto y un costo válido.', false); 
+            return; 
+        }
         let fecha = new Date().toLocaleDateString('es-MX', { weekday: 'long', month: 'short', day: 'numeric' });
         gastos.unshift({concepto: concepto, monto: monto, fecha: fecha, categoria: categoria});
         localStorage.setItem('misGastos_v4', JSON.stringify(gastos));
@@ -546,7 +619,7 @@
             totalExtra += ext.monto;
             extContainer.innerHTML += `
                 <div style="background: rgba(0, 230, 118, 0.1); border: 1px solid #00e676; padding: 6px 10px; border-radius: 8px; display:flex; justify-content:space-between; align-items:center;">
-                    <span style="font-size:13px; color:#00e676;">+ $${ext.monto} <small style="color:var(--text-color);">(${ext.concepto})</small></span>
+                    <span style="font-size:13px; color:#00e676;">+ $${ext.monto.toFixed(2)} <small style="color:var(--text-color);">(${ext.concepto})</small></span>
                     <button onclick="borrarIngresoExtra(${i})" style="background:none; border:none; color:#ff5252; padding:0; margin:0; cursor:pointer; width:auto;">✖</button>
                 </div>`;
         });
@@ -613,6 +686,8 @@
     function renderFinanzasExtra() {
         // Alcancía
         let alcContainer = document.getElementById('alcanciaDisplay');
+        document.getElementById('btnBorrarAlcancia').style.display = alcancia.meta > 0 ? 'inline-block' : 'none';
+
         if(alcancia.meta > 0) {
             let pct = Math.min((alcancia.actual / alcancia.meta) * 100, 100).toFixed(0);
             alcContainer.innerHTML = `
@@ -665,17 +740,31 @@
     function guardarConfigAlcancia() {
         let n = document.getElementById('alcanciaNombre').value.trim();
         let m = parseFloat(document.getElementById('alcanciaMeta').value);
-        if(n === '' || isNaN(m) || m <= 0) { alert('Ponle un nombre y una meta válida'); return; }
+        if(n === '' || isNaN(m) || m <= 0) { 
+            showModal('Datos incompletos', 'Ponle un nombre y una meta válida.', false); 
+            return; 
+        }
         alcancia.nombre = n; alcancia.meta = m;
         localStorage.setItem('miAlcancia_v1', JSON.stringify(alcancia));
         cerrarModal('modalConfigAlcancia');
         renderFinanzasExtra();
     }
 
+    function borrarAlcancia() {
+        showModal('Romper Alcancía', '¿Estás seguro de que quieres vaciar y borrar esta alcancía? (Tus gastos de la semana no se borrarán).', true, () => {
+            alcancia = { nombre: '', meta: 0, actual: 0 };
+            localStorage.setItem('miAlcancia_v1', JSON.stringify(alcancia));
+            renderFinanzasExtra();
+        }, 'Sí, romper');
+    }
+
     function guardarAbonoAlcancia() {
         let abono = parseFloat(document.getElementById('abonoMonto').value);
         let descontar = document.getElementById('descontarBalance').checked;
-        if(isNaN(abono) || abono <= 0) { alert('Pon una cantidad válida'); return; }
+        if(isNaN(abono) || abono <= 0) { 
+            showModal('Datos incompletos', 'Pon una cantidad válida para abonar.', false); 
+            return; 
+        }
         
         alcancia.actual += abono;
         localStorage.setItem('miAlcancia_v1', JSON.stringify(alcancia));
@@ -705,8 +794,10 @@
         let c = document.getElementById('prestamoConcepto').value.trim();
         let m = parseFloat(document.getElementById('prestamoMonto').value);
         
-        if(p === '' || isNaN(m) || m <= 0) { alert('Faltan datos'); return; }
-        
+        if(p === '' || isNaN(m) || m <= 0) { 
+            showModal('Datos incompletos', 'Faltan datos para registrar el préstamo.', false); 
+            return; 
+        }
         prestamos.push({ tipo: t, persona: p, concepto: c, monto: m });
         localStorage.setItem('misPrestamos_v1', JSON.stringify(prestamos));
         cerrarModal('modalNuevoPrestamo');
@@ -714,11 +805,11 @@
     }
 
     function saldarPrestamo(idx) {
-        if(confirm('¿Seguro que este préstamo ya quedó saldado? Se borrará de la lista.')) {
+        showModal('Saldar Préstamo', '¿Seguro que este préstamo ya quedó saldado? Se borrará de la lista.', true, () => {
             prestamos.splice(idx, 1);
             localStorage.setItem('misPrestamos_v1', JSON.stringify(prestamos));
             renderFinanzasExtra();
-        }
+        }, 'Sí, saldar');
     }
 
 
@@ -764,7 +855,10 @@
         const nombre = document.getElementById('quickName').value.trim();
         const monto = parseFloat(document.getElementById('quickAmount').value);
         const cat = document.getElementById('quickCat').value;
-        if (nombre === '' || isNaN(monto) || monto <= 0) { return; }
+        if (nombre === '' || isNaN(monto) || monto <= 0) { 
+            showModal('Datos incompletos', 'Ingresa un nombre y un costo válido.', false); 
+            return; 
+        }
         accesosRapidos.push({ nombre: nombre, monto: monto, emoji: emoji, categoria: cat });
         localStorage.setItem('misAccesos_v2', JSON.stringify(accesosRapidos));
         renderAccesos();
@@ -795,7 +889,7 @@
             etiqueta: etiqueta,
             ingresoBase: ingreso,
             ingresoExtraInfo: [...ingresosExtra],
-            ingreso: totalRecibido, // Suma final para compatibilidad
+            ingreso: totalRecibido,
             totalGastos: totalGastado,
             sobrante: totalRecibido - totalGastado,
             gastos: [...gastos] 
@@ -815,7 +909,6 @@
     }
 
     function confirmarLimpieza() {
-        let div = document.createElement('div');
         showModal('Cerrar Semana', '¿Guardar esta semana en tu historial y poner todo en cero?', true, () => {
             archivarSemanaLocal("Cierre Manual");
             navigate('archive');
@@ -977,7 +1070,7 @@
         reader.readAsText(file);
     }
 
-    // Inicializar
+    // Inicializar app
     checkAutoClose();
     actualizarUI();
     renderAccesos();
