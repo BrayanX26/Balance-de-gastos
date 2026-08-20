@@ -57,6 +57,7 @@
         
         label { font-weight: bold; display: block; margin-top: 15px; font-size: 14px; color: var(--label-color); transition: color 0.3s ease; text-align: left;}
         input, select { width: 100%; padding: 12px; margin-top: 5px; border-radius: 8px; border: 1px solid var(--input-border); background: var(--input-bg); color: var(--text-color); box-sizing: border-box; font-size: 16px; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+        input[type="checkbox"] { width: auto; margin-right: 10px; transform: scale(1.3); }
         input:focus, select:focus { outline: none; border-color: #4db8ff; }
         
         button { width: 100%; padding: 14px; margin-top: 20px; border-radius: 8px; border: none; background-color: #4db8ff; color: #121212; cursor: pointer; font-weight: bold; font-size: 16px; }
@@ -84,7 +85,7 @@
         .btn-delete-quick { position: absolute; top: -5px; right: -5px; background: #ff5252; color: white; border: none; border-radius: 50%; width: 16px; height: 16px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; margin: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.3); font-weight: bold; }
         .btn-delete { background: none; border: none; color: #ff5252; font-size: 18px; cursor: pointer; padding: 5px; margin: 0; width: auto; display: flex; align-items: center; justify-content: center; border-radius: 50%; background-color: rgba(255, 82, 82, 0.1); }
 
-        /* Categorías y Gráficas Mejoradas (Tipo Donut) */
+        /* Categorías y Gráficas */
         .cat-badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; color: #fff; margin-top: 4px; width: fit-content; }
         .chart-container { display: flex; align-items: center; gap: 20px; background: var(--card-bg); padding: 20px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid #4db8ff; }
         
@@ -130,9 +131,11 @@
         .archive-btn { padding: 10px; font-size: 14px; background: transparent; border: 1px solid #4db8ff; color: #4db8ff; margin-top: 5px; flex: 1; border-radius: 8px; cursor: pointer; font-weight: bold;}
         .archive-btn.pdf { border-color: #f44336; color: #f44336; }
         
-        /* Botón borrar archivo corregido con Flexbox */
         .btn-delete-archive { background: rgba(255, 82, 82, 0.1); color: #ff5252; border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background-color 0.2s ease; flex-shrink: 0; margin-left: 10px;}
         .btn-delete-archive:hover { background: rgba(255, 82, 82, 0.3); }
+
+        /* Finanzas Extra UI */
+        .prestamo-card { background: var(--item-bg); padding:12px; border-radius:10px; display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
     
         /* Estilos para impresión (PDF) */
         @media print {
@@ -169,6 +172,7 @@
     </div>
     <ul class="sidebar-menu">
         <li onclick="navigate('dashboard')">🏠 Semana Actual</li>
+        <li onclick="navigate('finance')">💸 Finanzas Extra</li>
         <li onclick="navigate('archive')">📂 Historial de Semanas</li>
         <li onclick="navigate('settings')">⚙️ Respaldo y Datos</li>
     </ul>
@@ -186,8 +190,12 @@
             </div>
             
             <div class="card">
-                <label for="ingreso">¿Cuánto te dieron para la semana? ($):</label>
+                <label for="ingreso">Ingreso de la semana ($):</label>
                 <input type="number" id="ingreso" placeholder="Ej. 600" onchange="guardarIngreso()" inputmode="decimal">
+                
+                <div id="ingresosExtraContainer" style="margin-top: 10px; display:flex; flex-direction:column; gap:5px;"></div>
+                <button onclick="abrirModalIngresoExtra()" style="background-color: transparent; color: #00e676; border: 1px dashed #00e676; padding: 8px; margin-top: 10px; font-size: 14px; width: 100%;">+ Añadir Ingreso Extra</button>
+
                 <p style="margin-bottom: 0; font-size: 14px; margin-top: 15px; color: var(--label-color);">Balance Disponible:</p>
                 <div class="balance" id="balanceText">$0.00</div>
             </div>
@@ -228,6 +236,40 @@
             <button class="btn-danger" onclick="confirmarLimpieza()">Cerrar y Archivar Semana</button>
         </div>
 
+        <!-- PANTALLA 4: FINANZAS EXTRA (ALCANCIA Y PRESTAMOS) -->
+        <div id="view-finance" class="page-section">
+            <div class="header-section">
+                <button class="menu-btn" onclick="openSidebar()">☰</button>
+                <h2>Finanzas Extra</h2>
+                <div style="width: 40px;"></div>
+            </div>
+
+            <!-- ALCANCIA -->
+            <div class="card" style="text-align: left; border-left-color: #ff9800;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h3 style="margin: 0; color: #ff9800;">🐖 Mi Alcancía</h3>
+                    <button onclick="abrirModalConfigAlcancia()" style="width:auto; padding:5px 10px; margin:0; font-size:12px; background:var(--card-bg); border:1px solid #ff9800; color:#ff9800;">⚙️ Ajustar</button>
+                </div>
+                <div id="alcanciaDisplay" style="margin-top:15px;">
+                    <!-- Se llena por JS -->
+                </div>
+            </div>
+
+            <!-- PRÉSTAMOS -->
+            <div class="card" style="text-align: left; border-left-color: #9c27b0;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h3 style="margin: 0; color: #9c27b0;">🤝 Préstamos</h3>
+                    <button onclick="abrirModalPrestamo()" style="width:auto; padding:5px 10px; margin:0; font-size:12px; background:var(--card-bg); border:1px solid #9c27b0; color:#9c27b0;">+ Nuevo</button>
+                </div>
+                
+                <h4 style="color:#00e676; margin-top:20px; margin-bottom:10px;">⬇️ Me deben (Por cobrar)</h4>
+                <div id="listaMeDeben"></div>
+
+                <h4 style="color:#ff5252; margin-top:25px; margin-bottom:10px;">⬆️ Debo (Por pagar)</h4>
+                <div id="listaDebo"></div>
+            </div>
+        </div>
+
         <!-- PANTALLA 3: CONFIGURACIÓN Y RESPALDO -->
         <div id="view-settings" class="page-section">
             <div class="header-section">
@@ -259,7 +301,7 @@
             <div class="header-section">
                 <button class="menu-btn" onclick="openSidebar()">☰</button>
                 <h2>Historiales Pasados</h2>
-                <div style="width: 40px;"></div> <!-- Div vacío para centrar título -->
+                <div style="width: 40px;"></div> 
             </div>
             <p style="color: var(--label-color); font-size: 14px; text-align: left;">Tus semanas cerradas automáticamente o de forma manual aparecen aquí ordenadas.</p>
             <div id="archiveContainer">
@@ -270,7 +312,7 @@
     </div>
 </div>
 
-<!-- Modales -->
+<!-- Modales Varios -->
 <div class="modal-overlay" id="customModal">
     <div class="modal-box">
         <h3 class="modal-title" id="modalTitle">Mensaje</h3>
@@ -284,10 +326,8 @@
         <h3 class="modal-title">Nuevo Acceso Rápido</h3>
         <label for="quickEmoji">Emoji (opcional):</label>
         <input type="text" id="quickEmoji" placeholder="Ej. 🏋️‍♂️, 🦾, 🌮" maxlength="2">
-        
         <label for="quickName">Nombre:</label>
         <input type="text" id="quickName" placeholder="Ej. Gym, Materiales...">
-        
         <label for="quickCat">Categoría:</label>
         <select id="quickCat">
             <option value="Comida">🌮 Comida</option>
@@ -298,20 +338,88 @@
             <option value="Entretenimiento">🎮 Hobbies (Juegos/Trombón)</option>
             <option value="Otros" selected>📦 Otros</option>
         </select>
-
         <label for="quickAmount">Costo ($):</label>
         <input type="number" id="quickAmount" placeholder="Ej. 20" inputmode="decimal">
-        
         <div class="modal-actions" style="margin-top: 25px;">
-            <button class="btn-modal btn-cancel" onclick="cerrarModalNuevoAcceso()">Cancelar</button>
+            <button class="btn-modal btn-cancel" onclick="cerrarModal('addQuickModal')">Cancelar</button>
             <button class="btn-modal btn-primary" onclick="guardarNuevoAcceso()">Guardar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Ingreso Extra -->
+<div class="modal-overlay" id="modalIngresoExtra">
+    <div class="modal-box">
+        <h3 class="modal-title" style="color:#00e676;">Ingreso Extra</h3>
+        <p style="font-size:13px; color:var(--label-color); margin-bottom:15px;">Añade dinero que recibiste a mitad de semana sin alterar tu presupuesto base.</p>
+        <label for="extraConcepto">¿De dónde provino?</label>
+        <input type="text" id="extraConcepto" placeholder="Ej. Chamba extra, abuela...">
+        <label for="extraMonto">Monto ($):</label>
+        <input type="number" id="extraMonto" placeholder="Ej. 300" inputmode="decimal">
+        <div class="modal-actions" style="margin-top: 25px;">
+            <button class="btn-modal btn-cancel" onclick="cerrarModal('modalIngresoExtra')">Cancelar</button>
+            <button class="btn-modal btn-primary" onclick="guardarIngresoExtra()">Añadir</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Config Alcancía -->
+<div class="modal-overlay" id="modalConfigAlcancia">
+    <div class="modal-box">
+        <h3 class="modal-title" style="color:#ff9800;">Mi Alcancía</h3>
+        <label for="alcanciaNombre">¿Para qué estás ahorrando?</label>
+        <input type="text" id="alcanciaNombre" placeholder="Ej. Materiales MECÁNOVA">
+        <label for="alcanciaMeta">Monto Meta ($):</label>
+        <input type="number" id="alcanciaMeta" placeholder="Ej. 800" inputmode="decimal">
+        <div class="modal-actions" style="margin-top: 25px;">
+            <button class="btn-modal btn-cancel" onclick="cerrarModal('modalConfigAlcancia')">Cancelar</button>
+            <button class="btn-modal btn-primary" style="background-color:#ff9800;" onclick="guardarConfigAlcancia()">Guardar Meta</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Abonar Alcancía -->
+<div class="modal-overlay" id="modalAbonarAlcancia">
+    <div class="modal-box">
+        <h3 class="modal-title" style="color:#ff9800;">Abonar a Alcancía</h3>
+        <label for="abonoMonto">¿Cuánto deseas meter al cochinito? ($):</label>
+        <input type="number" id="abonoMonto" placeholder="Ej. 50" inputmode="decimal">
+        <div style="text-align:left; margin-top:15px; display:flex; align-items:center;">
+            <input type="checkbox" id="descontarBalance" checked>
+            <label for="descontarBalance" style="margin:0; font-weight:normal; font-size:13px;">Descontar este dinero del balance de mi semana actual</label>
+        </div>
+        <div class="modal-actions" style="margin-top: 25px;">
+            <button class="btn-modal btn-cancel" onclick="cerrarModal('modalAbonarAlcancia')">Cancelar</button>
+            <button class="btn-modal btn-primary" style="background-color:#ff9800;" onclick="guardarAbonoAlcancia()">Abonar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Nuevo Préstamo -->
+<div class="modal-overlay" id="modalNuevoPrestamo">
+    <div class="modal-box">
+        <h3 class="modal-title" style="color:#9c27b0;">Nuevo Préstamo</h3>
+        <label for="prestamoTipo">Tipo:</label>
+        <select id="prestamoTipo">
+            <option value="me_deben">⬇️ Me deben dinero</option>
+            <option value="debo">⬆️ Debo dinero</option>
+        </select>
+        <label for="prestamoPersona">¿A quién o de quién?</label>
+        <input type="text" id="prestamoPersona" placeholder="Ej. Juan, Papá...">
+        <label for="prestamoConcepto">Concepto / Motivo:</label>
+        <input type="text" id="prestamoConcepto" placeholder="Ej. Copias de Suelos, Pasaje...">
+        <label for="prestamoMonto">Monto ($):</label>
+        <input type="number" id="prestamoMonto" placeholder="Ej. 50" inputmode="decimal">
+        <div class="modal-actions" style="margin-top: 25px;">
+            <button class="btn-modal btn-cancel" onclick="cerrarModal('modalNuevoPrestamo')">Cancelar</button>
+            <button class="btn-modal btn-primary" style="background-color:#9c27b0;" onclick="guardarNuevoPrestamo()">Registrar</button>
         </div>
     </div>
 </div>
 
 <div id="printArea" style="display:none;"></div>
 <script>
-    // --- LÓGICA DE MODO CLARO/OSCURO ---
+    // --- MODO CLARO/OSCURO ---
     const themeBtn = document.getElementById('themeToggle');
     const themeMeta = document.getElementById('themeColorMeta');
     let isLightMode = localStorage.getItem('app_theme') === 'light';
@@ -327,7 +435,6 @@
             themeMeta.setAttribute('content', '#121212');
         }
     }
-
     function toggleTheme() {
         isLightMode = !isLightMode;
         localStorage.setItem('app_theme', isLightMode ? 'light' : 'dark');
@@ -335,55 +442,24 @@
     }
     applyTheme(); 
 
-    // --- INICIALIZACIÓN DE FECHAS DE SEMANA ---
+    // --- VARIABLES GLOBALES ---
     let fechaInicioSemana = localStorage.getItem('fechaInicio_v3');
     if (!fechaInicioSemana) {
         fechaInicioSemana = new Date().toLocaleDateString('es-MX', { month: 'short', day: 'numeric' });
         localStorage.setItem('fechaInicio_v3', fechaInicioSemana);
     }
 
-    // --- SERVICE WORKER ---
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').catch(err => console.log('Error SW', err));
-    }
+    const catColors = { 'Comida': '#ff9800', 'Transporte': '#03a9f4', 'Escuela': '#9c27b0', 'Proyectos': '#e91e63', 'Gym': '#4caf50', 'Entretenimiento': '#f44336', 'Otros': '#9e9e9e' };
 
-    // --- COLORES DE CATEGORÍAS ---
-    const catColors = {
-        'Comida': '#ff9800', 
-        'Transporte': '#03a9f4', 
-        'Escuela': '#9c27b0',
-        'Proyectos': '#e91e63', 
-        'Gym': '#4caf50', 
-        'Entretenimiento': '#f44336', 
-        'Otros': '#9e9e9e'
-    };
-
-    // --- VARIABLES GLOBALES ---
     let gastos = JSON.parse(localStorage.getItem('misGastos_v4')) || [];
     let ingreso = parseFloat(localStorage.getItem('miIngreso_v3')) || 0;
+    
+    // Nuevas variables Finanzas
+    let ingresosExtra = JSON.parse(localStorage.getItem('misIngresosExtra_v1')) || [];
+    let alcancia = JSON.parse(localStorage.getItem('miAlcancia_v1')) || { nombre: '', meta: 0, actual: 0 };
+    let prestamos = JSON.parse(localStorage.getItem('misPrestamos_v1')) || [];
 
-    // --- CIERRE AUTOMÁTICO DE SEMANA ---
-    function getMonday(d) {
-        d = new Date(d);
-        var day = d.getDay(), diff = d.getDate() - day + (day == 0 ? -6 : 1);
-        return new Date(d.setDate(diff)).setHours(0,0,0,0);
-    }
-
-    function checkAutoClose() {
-        let savedMonday = localStorage.getItem('currentMonday_v1');
-        let actualMonday = getMonday(new Date());
-
-        if (!savedMonday) {
-            localStorage.setItem('currentMonday_v1', actualMonday);
-        } else if (actualMonday > parseInt(savedMonday)) {
-            if(gastos.length > 0 || ingreso > 0) {
-                archivarSemanaLocal("Cierre Automático");
-            }
-            localStorage.setItem('currentMonday_v1', actualMonday);
-        }
-    }
-
-    // --- NAVEGACIÓN Y SIDEBAR ---
+    // --- NAVEGACIÓN ---
     function openSidebar() {
         document.getElementById('sidebar').classList.add('open');
         document.getElementById('sidebarOverlay').classList.add('show');
@@ -393,62 +469,260 @@
         document.getElementById('sidebarOverlay').classList.remove('show');
     }
     function navigate(view) {
-        // Ocultar todas las pantallas primero
         document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
-        // Mostrar solo la pantalla solicitada
         document.getElementById('view-' + view).classList.add('active');
         closeSidebar();
         if(view === 'archive') renderArchive();
+        if(view === 'finance') renderFinanzasExtra();
     }
 
-    // --- MODALES ---
-    const customModal = document.getElementById('customModal');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalBody = document.getElementById('modalBody');
-    const modalActions = document.getElementById('modalActions');
+    function cerrarModal(id) { document.getElementById(id).classList.remove('show'); }
 
-    function showModal(title, message, isConfirm, onConfirmCallback, confirmText="Sí, archivar") {
-        modalTitle.innerText = title;
-        modalBody.innerHTML = message; 
-        modalActions.innerHTML = '';
+    // --- INGRESOS EXTRA ---
+    function abrirModalIngresoExtra() {
+        document.getElementById('extraConcepto').value = '';
+        document.getElementById('extraMonto').value = '';
+        document.getElementById('modalIngresoExtra').classList.add('show');
+    }
+    
+    function guardarIngresoExtra() {
+        let c = document.getElementById('extraConcepto').value.trim();
+        let m = parseFloat(document.getElementById('extraMonto').value);
+        if(c === '' || isNaN(m) || m <= 0) { alert('Llena bien los datos'); return; }
+        
+        ingresosExtra.push({ concepto: c, monto: m });
+        localStorage.setItem('misIngresosExtra_v1', JSON.stringify(ingresosExtra));
+        cerrarModal('modalIngresoExtra');
+        actualizarUI();
+    }
 
-        if (isConfirm) {
-            const btnCancel = document.createElement('button');
-            btnCancel.className = 'btn-modal btn-cancel';
-            btnCancel.innerText = 'Cancelar';
-            btnCancel.onclick = () => { customModal.classList.remove('show'); };
-            
-            const btnOk = document.createElement('button');
-            btnOk.className = 'btn-modal btn-confirm';
-            btnOk.innerText = confirmText;
-            btnOk.onclick = () => {
-                customModal.classList.remove('show');
-                if(onConfirmCallback) onConfirmCallback();
-            };
-            modalActions.appendChild(btnCancel);
-            modalActions.appendChild(btnOk);
-        } else {
-            const btnOk = document.createElement('button');
-            btnOk.className = 'btn-modal btn-primary';
-            btnOk.innerText = 'Entendido';
-            btnOk.onclick = () => { customModal.classList.remove('show'); };
-            modalActions.appendChild(btnOk);
+    function borrarIngresoExtra(idx) {
+        ingresosExtra.splice(idx, 1);
+        localStorage.setItem('misIngresosExtra_v1', JSON.stringify(ingresosExtra));
+        actualizarUI();
+    }
+
+    // --- GASTOS BASE ---
+    document.getElementById('ingreso').value = ingreso || '';
+    function guardarIngreso() {
+        ingreso = parseFloat(document.getElementById('ingreso').value) || 0;
+        localStorage.setItem('miIngreso_v3', ingreso);
+        actualizarUI();
+    }
+
+    function agregarGastoRapido(concepto, monto, categoria) {
+        let fecha = new Date().toLocaleDateString('es-MX', { weekday: 'long', month: 'short', day: 'numeric' });
+        gastos.unshift({concepto: concepto, monto: monto, fecha: fecha, categoria: categoria || 'Otros'});
+        localStorage.setItem('misGastos_v4', JSON.stringify(gastos));
+        actualizarUI();
+    }
+
+    function agregarGasto() {
+        let concepto = document.getElementById('concepto').value;
+        let monto = parseFloat(document.getElementById('monto').value);
+        let categoria = document.getElementById('categoriaGasto').value;
+
+        if(concepto === '' || isNaN(monto) || monto <= 0) { alert('Faltan datos'); return; }
+        let fecha = new Date().toLocaleDateString('es-MX', { weekday: 'long', month: 'short', day: 'numeric' });
+        gastos.unshift({concepto: concepto, monto: monto, fecha: fecha, categoria: categoria});
+        localStorage.setItem('misGastos_v4', JSON.stringify(gastos));
+        document.getElementById('concepto').value = '';
+        document.getElementById('monto').value = '';
+        actualizarUI();
+    }
+
+    function borrarGasto(index) {
+        gastos.splice(index, 1);
+        localStorage.setItem('misGastos_v4', JSON.stringify(gastos));
+        actualizarUI();
+    }
+
+    function actualizarUI() {
+        // Ingresos Extra
+        let totalExtra = 0;
+        let extContainer = document.getElementById('ingresosExtraContainer');
+        extContainer.innerHTML = '';
+        ingresosExtra.forEach((ext, i) => {
+            totalExtra += ext.monto;
+            extContainer.innerHTML += `
+                <div style="background: rgba(0, 230, 118, 0.1); border: 1px solid #00e676; padding: 6px 10px; border-radius: 8px; display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:13px; color:#00e676;">+ $${ext.monto} <small style="color:var(--text-color);">(${ext.concepto})</small></span>
+                    <button onclick="borrarIngresoExtra(${i})" style="background:none; border:none; color:#ff5252; padding:0; margin:0; cursor:pointer; width:auto;">✖</button>
+                </div>`;
+        });
+
+        // Gastos
+        let totalGastos = 0;
+        let container = document.getElementById('listaGastosGrouped');
+        container.innerHTML = '';
+        let catSums = {};
+        const grupos = {};
+        gastos.forEach((gasto, originalIndex) => {
+            totalGastos += gasto.monto;
+            let cat = gasto.categoria || 'Otros';
+            catSums[cat] = (catSums[cat] || 0) + gasto.monto;
+            if(!grupos[gasto.fecha]) grupos[gasto.fecha] = [];
+            grupos[gasto.fecha].push({ ...gasto, originalIndex });
+        });
+
+        // Grafica
+        let chartWrapper = document.getElementById('chartContainerWrapper');
+        if(gastos.length > 0) {
+            chartWrapper.style.display = 'block';
+            let chartCSS = [];
+            let currentDeg = 0;
+            let legendHTML = '';
+            for (let c in catSums) {
+                let percentage = (catSums[c] / totalGastos) * 360;
+                let color = catColors[c] || '#9e9e9e';
+                chartCSS.push(`${color} ${currentDeg}deg ${currentDeg + percentage}deg`);
+                currentDeg += percentage;
+                let pctText = ((catSums[c] / totalGastos) * 100).toFixed(1);
+                legendHTML += `<div class="legend-item"><div><span class="legend-color" style="background: ${color};"></span>${c}</div><strong>$${catSums[c].toFixed(2)} <span style="color:var(--label-color); font-weight:normal; font-size:10px;">(${pctText}%)</span></strong></div>`;
+            }
+            document.getElementById('graficaPastel').style.background = `conic-gradient(${chartCSS.join(', ')})`;
+            document.getElementById('graficaLeyenda').innerHTML = legendHTML;
+        } else { chartWrapper.style.display = 'none'; }
+
+        // Lista
+        for (const fecha in grupos) {
+            const header = document.createElement('h4');
+            header.className = 'day-header';
+            header.innerText = fecha;
+            container.appendChild(header);
+            const ul = document.createElement('ul');
+            grupos[fecha].forEach(gasto => {
+                let li = document.createElement('li');
+                let catColor = catColors[gasto.categoria || 'Otros'] || '#9e9e9e';
+                li.style.borderLeftColor = catColor;
+                li.innerHTML = `<div class="item-details"><span>${gasto.concepto}</span><span class="cat-badge" style="background: ${catColor}25; color: ${catColor}; border: 1px solid ${catColor}50;">${gasto.categoria || 'Otros'}</span></div><span class="monto-text">$${gasto.monto.toFixed(2)}</span><button class="btn-delete" onclick="borrarGasto(${gasto.originalIndex})" title="Borrar gasto">🗑️</button>`;
+                ul.appendChild(li);
+            });
+            container.appendChild(ul);
         }
-        customModal.classList.add('show');
+        if(gastos.length === 0) container.innerHTML = '<p style="color: var(--label-color); font-size:14px; text-align:center;">Aún no hay gastos registrados.</p>';
+
+        // Calculo Final
+        let balance = (ingreso + totalExtra) - totalGastos;
+        let balanceEl = document.getElementById('balanceText');
+        balanceEl.innerText = `$${balance.toFixed(2)}`;
+        balanceEl.style.color = balance < 0 ? '#ff5252' : '#00e676';
     }
 
-    // --- ACCESOS RÁPIDOS ---
-    let accesosRapidos = JSON.parse(localStorage.getItem('misAccesos_v2'));
-    if (!accesosRapidos) {
-        accesosRapidos = [
-            { nombre: 'Urbano', monto: 5, emoji: '🚌', categoria: 'Transporte' },
-            { nombre: 'Halcón', monto: 10, emoji: '🦅', categoria: 'Transporte' },
-            { nombre: 'Mototaxi', monto: 10, emoji: '🛺', categoria: 'Transporte' },
-            { nombre: 'Comida', monto: 55, emoji: '🌮', categoria: 'Comida' }
-        ];
-        localStorage.setItem('misAccesos_v2', JSON.stringify(accesosRapidos));
+    // --- ALCANCIA Y PRESTAMOS (FINANZAS EXTRA) ---
+    function renderFinanzasExtra() {
+        // Alcancía
+        let alcContainer = document.getElementById('alcanciaDisplay');
+        if(alcancia.meta > 0) {
+            let pct = Math.min((alcancia.actual / alcancia.meta) * 100, 100).toFixed(0);
+            alcContainer.innerHTML = `
+                <div style="margin-bottom: 10px; font-weight:bold; color:var(--text-color); font-size:16px;">${alcancia.nombre}</div>
+                <div style="background: var(--input-bg); border-radius: 10px; height: 22px; width: 100%; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);">
+                    <div style="background: linear-gradient(90deg, #ffb74d, #ff9800); height: 100%; width: ${pct}%; transition: width 0.5s ease; display:flex; align-items:center; justify-content:center; color:#121212; font-size:11px; font-weight:bold;">${pct > 10 ? pct+'%' : ''}</div>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:13px; color:var(--label-color); margin-top:8px;">
+                    <span>Ahorrado: <strong>$${alcancia.actual.toFixed(2)}</strong></span>
+                    <span>Meta: <strong>$${alcancia.meta.toFixed(2)}</strong></span>
+                </div>
+                <button onclick="document.getElementById('modalAbonarAlcancia').classList.add('show');" style="background-color: transparent; border: 1px solid #ff9800; color:#ff9800; padding:10px; margin-top:15px;">💰 Hacer un abono</button>
+            `;
+        } else {
+            alcContainer.innerHTML = `<p style="color:var(--label-color); font-size:14px;">Aún no has configurado una meta. Pícale en Ajustar para empezar a ahorrar.</p>`;
+        }
+
+        // Préstamos
+        let listMeDeben = document.getElementById('listaMeDeben');
+        let listDebo = document.getElementById('listaDebo');
+        listMeDeben.innerHTML = ''; listDebo.innerHTML = '';
+        
+        let c_medeben = 0, c_debo = 0;
+        prestamos.forEach((p, i) => {
+            let html = `
+                <div class="prestamo-card" style="border-left: 4px solid ${p.tipo === 'me_deben' ? '#00e676' : '#ff5252'};">
+                    <div style="flex:1;">
+                        <span style="display:block; font-weight:bold; font-size:15px; color:var(--text-color);">${p.persona}</span>
+                        <span style="font-size:12px; color:var(--label-color);">${p.concepto}</span>
+                    </div>
+                    <div style="text-align:right;">
+                        <strong style="font-size:16px;">$${p.monto.toFixed(2)}</strong><br>
+                        <button style="background:transparent; border:1px solid var(--label-color); color:var(--label-color); padding:4px 8px; font-size:11px; margin-top:5px; border-radius:5px; cursor:pointer;" onclick="saldarPrestamo(${i})">✔ Saldar</button>
+                    </div>
+                </div>`;
+            if(p.tipo === 'me_deben') { listMeDeben.innerHTML += html; c_medeben++; }
+            else { listDebo.innerHTML += html; c_debo++; }
+        });
+
+        if(c_medeben === 0) listMeDeben.innerHTML = '<p style="color:var(--label-color); font-size:13px;">Todo en orden. Nadie te debe dinero.</p>';
+        if(c_debo === 0) listDebo.innerHTML = '<p style="color:var(--label-color); font-size:13px;">Todo en orden. No tienes deudas.</p>';
     }
 
+    function abrirModalConfigAlcancia() {
+        document.getElementById('alcanciaNombre').value = alcancia.nombre;
+        document.getElementById('alcanciaMeta').value = alcancia.meta || '';
+        document.getElementById('modalConfigAlcancia').classList.add('show');
+    }
+
+    function guardarConfigAlcancia() {
+        let n = document.getElementById('alcanciaNombre').value.trim();
+        let m = parseFloat(document.getElementById('alcanciaMeta').value);
+        if(n === '' || isNaN(m) || m <= 0) { alert('Ponle un nombre y una meta válida'); return; }
+        alcancia.nombre = n; alcancia.meta = m;
+        localStorage.setItem('miAlcancia_v1', JSON.stringify(alcancia));
+        cerrarModal('modalConfigAlcancia');
+        renderFinanzasExtra();
+    }
+
+    function guardarAbonoAlcancia() {
+        let abono = parseFloat(document.getElementById('abonoMonto').value);
+        let descontar = document.getElementById('descontarBalance').checked;
+        if(isNaN(abono) || abono <= 0) { alert('Pon una cantidad válida'); return; }
+        
+        alcancia.actual += abono;
+        localStorage.setItem('miAlcancia_v1', JSON.stringify(alcancia));
+        
+        if(descontar) {
+            let fecha = new Date().toLocaleDateString('es-MX', { weekday: 'long', month: 'short', day: 'numeric' });
+            gastos.unshift({concepto: 'Ahorro: ' + alcancia.nombre, monto: abono, fecha: fecha, categoria: 'Proyectos'});
+            localStorage.setItem('misGastos_v4', JSON.stringify(gastos));
+            actualizarUI();
+        }
+        
+        document.getElementById('abonoMonto').value = '';
+        cerrarModal('modalAbonarAlcancia');
+        renderFinanzasExtra();
+    }
+
+    function abrirModalPrestamo() {
+        document.getElementById('prestamoPersona').value = '';
+        document.getElementById('prestamoConcepto').value = '';
+        document.getElementById('prestamoMonto').value = '';
+        document.getElementById('modalNuevoPrestamo').classList.add('show');
+    }
+
+    function guardarNuevoPrestamo() {
+        let t = document.getElementById('prestamoTipo').value;
+        let p = document.getElementById('prestamoPersona').value.trim();
+        let c = document.getElementById('prestamoConcepto').value.trim();
+        let m = parseFloat(document.getElementById('prestamoMonto').value);
+        
+        if(p === '' || isNaN(m) || m <= 0) { alert('Faltan datos'); return; }
+        
+        prestamos.push({ tipo: t, persona: p, concepto: c, monto: m });
+        localStorage.setItem('misPrestamos_v1', JSON.stringify(prestamos));
+        cerrarModal('modalNuevoPrestamo');
+        renderFinanzasExtra();
+    }
+
+    function saldarPrestamo(idx) {
+        if(confirm('¿Seguro que este préstamo ya quedó saldado? Se borrará de la lista.')) {
+            prestamos.splice(idx, 1);
+            localStorage.setItem('misPrestamos_v1', JSON.stringify(prestamos));
+            renderFinanzasExtra();
+        }
+    }
+
+
+    // --- ACCESOS RAPIDOS ---
     function renderAccesos() {
         const container = document.getElementById('quickAccessContainer');
         container.innerHTML = '';
@@ -485,19 +759,16 @@
         document.getElementById('quickCat').value = 'Otros';
         document.getElementById('addQuickModal').classList.add('show');
     }
-    function cerrarModalNuevoAcceso() { document.getElementById('addQuickModal').classList.remove('show'); }
     function guardarNuevoAcceso() {
         const emoji = document.getElementById('quickEmoji').value.trim();
         const nombre = document.getElementById('quickName').value.trim();
         const monto = parseFloat(document.getElementById('quickAmount').value);
         const cat = document.getElementById('quickCat').value;
-        if (nombre === '' || isNaN(monto) || monto <= 0) {
-            showModal('Datos incompletos', 'Ingresa un nombre y un costo.', false); return;
-        }
+        if (nombre === '' || isNaN(monto) || monto <= 0) { return; }
         accesosRapidos.push({ nombre: nombre, monto: monto, emoji: emoji, categoria: cat });
         localStorage.setItem('misAccesos_v2', JSON.stringify(accesosRapidos));
         renderAccesos();
-        cerrarModalNuevoAcceso();
+        cerrarModal('addQuickModal');
     }
     function borrarAccesoRapido(index) {
         accesosRapidos.splice(index, 1);
@@ -505,337 +776,38 @@
         renderAccesos();
     }
 
-    // --- GASTOS E INTERFAZ AGRUPADA ---
-    document.getElementById('ingreso').value = ingreso || '';
 
-    function guardarIngreso() {
-        ingreso = parseFloat(document.getElementById('ingreso').value) || 0;
-        localStorage.setItem('miIngreso_v3', ingreso);
-        actualizarUI();
-    }
-
-    function agregarGastoRapido(concepto, monto, categoria) {
-        let fecha = new Date().toLocaleDateString('es-MX', { weekday: 'long', month: 'short', day: 'numeric' });
-        gastos.unshift({concepto: concepto, monto: monto, fecha: fecha, categoria: categoria || 'Otros'});
-        localStorage.setItem('misGastos_v4', JSON.stringify(gastos));
-        actualizarUI();
-    }
-
-    function agregarGasto() {
-        let concepto = document.getElementById('concepto').value;
-        let monto = parseFloat(document.getElementById('monto').value);
-        let categoria = document.getElementById('categoriaGasto').value;
-
-        if(concepto === '' || isNaN(monto) || monto <= 0) {
-            showModal('Cuidado', 'Por favor pon un concepto y un costo válido.', false); return;
-        }
-        let fecha = new Date().toLocaleDateString('es-MX', { weekday: 'long', month: 'short', day: 'numeric' });
-        gastos.unshift({concepto: concepto, monto: monto, fecha: fecha, categoria: categoria});
-        localStorage.setItem('misGastos_v4', JSON.stringify(gastos));
-        document.getElementById('concepto').value = '';
-        document.getElementById('monto').value = '';
-        actualizarUI();
-    }
-
-    function borrarGasto(index) {
-        gastos.splice(index, 1);
-        localStorage.setItem('misGastos_v4', JSON.stringify(gastos));
-        actualizarUI();
-    }
-
-    function actualizarUI() {
-        let totalGastos = 0;
-        let container = document.getElementById('listaGastosGrouped');
-        container.innerHTML = '';
-        
-        let catSums = {};
-
-        const grupos = {};
-        gastos.forEach((gasto, originalIndex) => {
-            totalGastos += gasto.monto;
-            let cat = gasto.categoria || 'Otros';
-            catSums[cat] = (catSums[cat] || 0) + gasto.monto;
-
-            if(!grupos[gasto.fecha]) grupos[gasto.fecha] = [];
-            grupos[gasto.fecha].push({ ...gasto, originalIndex });
-        });
-
-        // Actualizar Gráfica a formato tipo Donut
-        let chartWrapper = document.getElementById('chartContainerWrapper');
-        if(gastos.length > 0) {
-            chartWrapper.style.display = 'block';
-            let chartCSS = [];
-            let currentDeg = 0;
-            let legendHTML = '';
-            for (let c in catSums) {
-                let percentage = (catSums[c] / totalGastos) * 360;
-                let color = catColors[c] || '#9e9e9e';
-                chartCSS.push(`${color} ${currentDeg}deg ${currentDeg + percentage}deg`);
-                currentDeg += percentage;
-                
-                let pctText = ((catSums[c] / totalGastos) * 100).toFixed(1);
-                legendHTML += `
-                    <div class="legend-item">
-                        <div><span class="legend-color" style="background: ${color};"></span>${c}</div>
-                        <strong>$${catSums[c].toFixed(2)} <span style="color:var(--label-color); font-weight:normal; font-size:10px;">(${pctText}%)</span></strong>
-                    </div>`;
-            }
-            document.getElementById('graficaPastel').style.background = `conic-gradient(${chartCSS.join(', ')})`;
-            document.getElementById('graficaLeyenda').innerHTML = legendHTML;
-        } else {
-            chartWrapper.style.display = 'none';
-        }
-
-        // Renderizar grupos de historial
-        for (const fecha in grupos) {
-            const header = document.createElement('h4');
-            header.className = 'day-header';
-            header.innerText = fecha;
-            container.appendChild(header);
-
-            const ul = document.createElement('ul');
-            grupos[fecha].forEach(gasto => {
-                let li = document.createElement('li');
-                let catColor = catColors[gasto.categoria || 'Otros'] || '#9e9e9e';
-                li.style.borderLeftColor = catColor;
-                
-                li.innerHTML = `
-                    <div class="item-details">
-                        <span>${gasto.concepto}</span>
-                        <span class="cat-badge" style="background: ${catColor}25; color: ${catColor}; border: 1px solid ${catColor}50;">${gasto.categoria || 'Otros'}</span>
-                    </div>
-                    <span class="monto-text">$${gasto.monto.toFixed(2)}</span>
-                    <button class="btn-delete" onclick="borrarGasto(${gasto.originalIndex})" title="Borrar gasto">🗑️</button>
-                `;
-                ul.appendChild(li);
-            });
-            container.appendChild(ul);
-        }
-
-        if(gastos.length === 0) {
-            container.innerHTML = '<p style="color: var(--label-color); font-size:14px; text-align:center;">Aún no hay gastos registrados.</p>';
-        }
-
-        let balance = ingreso - totalGastos;
-        let balanceEl = document.getElementById('balanceText');
-        balanceEl.innerText = `$${balance.toFixed(2)}`;
-        balanceEl.style.color = balance < 0 ? '#ff5252' : '#00e676';
-    }
-
-    // --- EXPORTAR A PDF PROFESIONAL ---
-    function exportarPDF(idx) {
-        let archivo = JSON.parse(localStorage.getItem('historialArchivado_v1')) || [];
-        let semana = archivo[idx];
-        let colorClase = semana.sobrante < 0 ? '#ff5252' : '#00e676';
-        
-        let printArea = document.getElementById('printArea');
-        if(!printArea) {
-            printArea = document.createElement('div');
-            printArea.id = 'printArea';
-            document.body.appendChild(printArea);
-        }
-
-        // Calcular grafica
-        let totalGastos = semana.totalGastos;
-        let catSums = {};
-        semana.gastos.forEach(g => {
-            let cat = g.categoria || 'Otros';
-            catSums[cat] = (catSums[cat] || 0) + g.monto;
-        });
-
-        let chartCSS = [];
-        let currentDeg = 0;
-        let legendHTML = '';
-        if(totalGastos > 0) {
-            for (let c in catSums) {
-                let percentage = (catSums[c] / totalGastos) * 360;
-                let color = catColors[c] || '#9e9e9e';
-                chartCSS.push(`${color} ${currentDeg}deg ${currentDeg + percentage}deg`);
-                currentDeg += percentage;
-                
-                let pctText = ((catSums[c] / totalGastos) * 100).toFixed(1);
-                legendHTML += `
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; color:#333;">
-                        <div style="display:flex; align-items:center;">
-                            <span style="width: 12px; height: 12px; border-radius: 50%; background: ${color}; display: inline-block; margin-right: 8px; -webkit-print-color-adjust: exact; print-color-adjust: exact;"></span>
-                            ${c}
-                        </div>
-                        <strong style="margin-left:15px;">$${catSums[c].toFixed(2)} <span style="font-weight:normal; font-size:11px; color:#555;">(${pctText}%)</span></strong>
-                    </div>`;
-            }
-        }
-
-        let tableRows = '';
-        if(semana.gastos.length === 0) {
-            tableRows = `<tr><td colspan="4" style="text-align:center;">No hubo gastos registrados en este periodo.</td></tr>`;
-        } else {
-            semana.gastos.forEach(g => {
-                let cat = g.categoria || 'Otros';
-                let hexColor = catColors[cat] || '#9e9e9e';
-                tableRows += `
-                    <tr>
-                        <td>${g.fecha}</td>
-                        <td><strong>${g.concepto}</strong></td>
-                        <td><span class="print-cat-badge" style="background-color: ${hexColor};">${cat}</span></td>
-                        <td style="text-align:right;">$${g.monto.toFixed(2)}</td>
-                    </tr>`;
-            });
-        }
-
-        let html = `
-            <div class="print-header">
-                <h1 class="print-title">Reporte de Balance Semanal</h1>
-                <div class="print-subtitle"><strong>Periodo:</strong> ${semana.fecha} ${semana.etiqueta ? `(${semana.etiqueta})` : ''}</div>
-            </div>
-            
-            <div class="print-summary">
-                <div class="print-summary-item">
-                    <div>Total Recibido</div>
-                    <div class="print-summary-value" style="color: #333;">$${semana.ingreso.toFixed(2)}</div>
-                </div>
-                <div class="print-summary-item">
-                    <div>Total Gastado</div>
-                    <div class="print-summary-value" style="color: #333;">$${semana.totalGastos.toFixed(2)}</div>
-                </div>
-                <div class="print-summary-item" style="color: ${colorClase}; -webkit-print-color-adjust: exact; print-color-adjust: exact;">
-                    <div style="color: #333;">Balance Final</div>
-                    <div class="print-summary-value">$${semana.sobrante.toFixed(2)}</div>
-                </div>
-            </div>
-        `;
-
-        if(totalGastos > 0) {
-            html += `
-            <div class="print-chart-container">
-                <div class="print-pie" style="background: conic-gradient(${chartCSS.join(', ')});"></div>
-                <div style="font-size:14px;">${legendHTML}</div>
-            </div>`;
-        }
-
-        html += `
-            <table class="print-table">
-                <thead>
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Concepto</th>
-                        <th>Categoría</th>
-                        <th style="text-align:right;">Monto ($)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${tableRows}
-                </tbody>
-            </table>
-            
-            <div class="print-footer">
-                Generado por App Balance ITO • ${new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' })}
-            </div>
-        `;
-
-        printArea.innerHTML = html;
-        
-        // Timeout para asegurar que el DOM se pintó
-        setTimeout(() => {
-            window.print();
-        }, 300);
-    }
-
-    
-    // --- RESPALDO Y RESTAURACIÓN ---
-    function exportarRespaldo() {
-        let respaldo = {
-            version: 1,
-            gastos: localStorage.getItem('misGastos_v4'),
-            ingreso: localStorage.getItem('miIngreso_v3'),
-            historial: localStorage.getItem('historialArchivado_v1'),
-            accesos: localStorage.getItem('misAccesos_v2'),
-            lunes: localStorage.getItem('currentMonday_v1'),
-            inicioSemana: localStorage.getItem('fechaInicio_v3')
-        };
-        
-        let blob = new Blob([JSON.stringify(respaldo)], { type: 'application/json' });
-        let url = URL.createObjectURL(blob);
-        let link = document.createElement("a");
-        link.setAttribute("href", url);
-        
-        let fecha = new Date().toLocaleDateString('es-MX').replace(/\//g, '-');
-        link.setAttribute("download", `Respaldo_Balance_${fecha}.json`);
-        
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
-
-    function procesarImportacion(event) {
-        let file = event.target.files[0];
-        if(!file) return;
-        
-        let reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                let data = JSON.parse(e.target.result);
-                
-                // Validación básica de que sea un archivo de la app
-                if(data.gastos !== undefined || data.historial !== undefined) {
-                    showModal('Restaurar Respaldo', 'Al restaurar, se borrarán tus datos actuales y serán reemplazados por los del archivo. ¿Estás seguro?', true, () => {
-                        if(data.gastos) localStorage.setItem('misGastos_v4', data.gastos);
-                        if(data.ingreso) localStorage.setItem('miIngreso_v3', data.ingreso);
-                        if(data.historial) localStorage.setItem('historialArchivado_v1', data.historial);
-                        if(data.accesos) localStorage.setItem('misAccesos_v2', data.accesos);
-                        if(data.lunes) localStorage.setItem('currentMonday_v1', data.lunes);
-                        if(data.inicioSemana) localStorage.setItem('fechaInicio_v3', data.inicioSemana);
-                        
-                        showModal('Éxito', 'Tus datos se restauraron correctamente. La aplicación se actualizará ahora.', false, () => {
-                            window.location.reload();
-                        });
-                        // Por si el usuario no presiona "Entendido" y toca fuera
-                        setTimeout(() => { window.location.reload(); }, 2500);
-                    }, 'Sí, restaurar');
-                } else {
-                    showModal('Archivo Inválido', 'El archivo que seleccionaste no parece ser un respaldo válido de esta aplicación.', false);
-                }
-            } catch(error) {
-                showModal('Error', 'Hubo un problema al leer el archivo. Asegúrate de que sea el .json original.', false);
-            }
-            event.target.value = ''; // Limpiar el input
-        };
-        reader.readAsText(file);
-    }
-
-    // --- ARCHIVO Y CERRAR SEMANA ---
+    // --- ARCHIVO Y PDF ---
     function archivarSemanaLocal(etiqueta = "") {
         let archivo = JSON.parse(localStorage.getItem('historialArchivado_v1')) || [];
-        
         let totalGastado = gastos.reduce((sum, g) => sum + g.monto, 0);
+        let totalExtra = ingresosExtra.reduce((sum, e) => sum + e.monto, 0);
+        let totalRecibido = ingreso + totalExtra;
         
         let fechaCierreDate = new Date();
         let fechaCierreCorto = fechaCierreDate.toLocaleDateString('es-MX', { month: 'short', day: 'numeric' });
         let fechaCierreAnio = fechaCierreDate.toLocaleDateString('es-MX', { year: 'numeric', month: 'short', day: 'numeric' });
-        
         let fechaInicio = localStorage.getItem('fechaInicio_v3') || fechaCierreCorto;
-        let fechaRango = "";
-        
-        if (fechaInicio === fechaCierreCorto) {
-            fechaRango = fechaCierreAnio; 
-        } else {
-            fechaRango = `Del ${fechaInicio} al ${fechaCierreAnio}`;
-        }
+        let fechaRango = (fechaInicio === fechaCierreCorto) ? fechaCierreAnio : `Del ${fechaInicio} al ${fechaCierreAnio}`;
         
         archivo.unshift({
             fecha: fechaRango,
             etiqueta: etiqueta,
-            ingreso: ingreso,
+            ingresoBase: ingreso,
+            ingresoExtraInfo: [...ingresosExtra],
+            ingreso: totalRecibido, // Suma final para compatibilidad
             totalGastos: totalGastado,
-            sobrante: ingreso - totalGastado,
+            sobrante: totalRecibido - totalGastado,
             gastos: [...gastos] 
         });
         
         localStorage.setItem('historialArchivado_v1', JSON.stringify(archivo));
         
-        gastos = [];
-        ingreso = 0;
+        // Reset
+        gastos = []; ingreso = 0; ingresosExtra = [];
         localStorage.setItem('misGastos_v4', JSON.stringify(gastos));
         localStorage.setItem('miIngreso_v3', ingreso);
+        localStorage.setItem('misIngresosExtra_v1', JSON.stringify(ingresosExtra));
         localStorage.removeItem('fechaInicio_v3'); 
         
         document.getElementById('ingreso').value = '';
@@ -843,6 +815,7 @@
     }
 
     function confirmarLimpieza() {
+        let div = document.createElement('div');
         showModal('Cerrar Semana', '¿Guardar esta semana en tu historial y poner todo en cero?', true, () => {
             archivarSemanaLocal("Cierre Manual");
             navigate('archive');
@@ -855,30 +828,27 @@
         let archivo = JSON.parse(localStorage.getItem('historialArchivado_v1')) || [];
 
         if(archivo.length === 0) {
-            container.innerHTML = '<p style="color: var(--label-color); text-align:center;">No tienes semanas archivadas todavía.</p>';
-            return;
+            container.innerHTML = '<p style="color: var(--label-color); text-align:center;">No tienes semanas archivadas todavía.</p>'; return;
         }
 
         archivo.forEach((semana, idx) => {
             let colorSobrante = semana.sobrante < 0 ? '#ff5252' : '#00e676';
             let notaEtiqueta = semana.etiqueta ? ` <span style="font-size:12px; font-weight:normal; color:#888;">(${semana.etiqueta})</span>` : '';
-            
             let card = document.createElement('div');
             card.className = 'archive-card';
-            
             card.innerHTML = `
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
                     <div class="archive-date" style="margin-bottom: 0;">🗓️ ${semana.fecha} ${notaEtiqueta}</div>
                     <button class="btn-delete-archive" onclick="confirmarBorradoArchivo(${idx})" title="Borrar historial" style="margin-top: -5px;">🗑️</button>
                 </div>
-                <div class="archive-stats"><span>Ingreso:</span> <strong>$${semana.ingreso.toFixed(2)}</strong></div>
+                <div class="archive-stats"><span>Ingreso Total:</span> <strong>$${semana.ingreso.toFixed(2)}</strong></div>
                 <div class="archive-stats"><span>Gastos:</span> <strong>$${semana.totalGastos.toFixed(2)}</strong></div>
                 <div class="archive-stats" style="border-top: 1px solid var(--input-border); padding-top:5px; margin-top:5px;">
                     <span>Sobrante:</span> <strong style="color: ${colorSobrante};">$${semana.sobrante.toFixed(2)}</strong>
                 </div>
                 <div style="display: flex; gap: 10px; margin-top: 15px;">
                     <button class="archive-btn" onclick="verDetallesArchivo(${idx})">Ver gastos</button>
-                    <button class="archive-btn pdf" onclick="exportarPDF(${idx})">📄 Guardar como PDF</button>
+                    <button class="archive-btn pdf" onclick="exportarPDF(${idx})">📄 Guardar PDF</button>
                 </div>
             `;
             container.appendChild(card);
@@ -886,43 +856,125 @@
     }
 
     function confirmarBorradoArchivo(index) {
-        showModal('Eliminar Historial', '¿Estás seguro de que quieres borrar el registro de esta semana? Esta acción no se puede deshacer.', true, () => {
-            borrarArchivo(index);
+        showModal('Eliminar Historial', '¿Borrar registro de esta semana? Esta acción no se deshace.', true, () => {
+            let archivo = JSON.parse(localStorage.getItem('historialArchivado_v1')) || [];
+            archivo.splice(index, 1);
+            localStorage.setItem('historialArchivado_v1', JSON.stringify(archivo));
+            renderArchive();
         }, 'Sí, eliminar');
-    }
-
-    function borrarArchivo(index) {
-        let archivo = JSON.parse(localStorage.getItem('historialArchivado_v1')) || [];
-        archivo.splice(index, 1);
-        localStorage.setItem('historialArchivado_v1', JSON.stringify(archivo));
-        renderArchive();
     }
 
     function verDetallesArchivo(idx) {
         let archivo = JSON.parse(localStorage.getItem('historialArchivado_v1')) || [];
         let semana = archivo[idx];
-        
         let listadoHTML = `<div style="text-align: left; padding: 5px; margin-top: 5px;">`;
-        if(semana.gastos.length === 0) {
-            listadoHTML += `<p style="text-align:center;">No hubo gastos esta semana.</p>`;
-        } else {
+        if(semana.gastos.length === 0) { listadoHTML += `<p style="text-align:center;">No hubo gastos.</p>`; } 
+        else {
             semana.gastos.forEach(g => {
                 let catColor = catColors[g.categoria || 'Otros'] || '#9e9e9e';
                 listadoHTML += `
                 <div style="background: var(--item-bg); margin-bottom: 10px; padding: 12px; border-radius: 10px; display:flex; justify-content:space-between; align-items:center; border-left: 4px solid ${catColor}; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
                     <div style="display:flex; flex-direction:column; gap: 4px;">
                         <span style="font-weight:bold; font-size:16px; color:var(--text-color);">${g.concepto}</span>
-                        <span style="font-size:12px; color:var(--date-color);">📅 ${g.fecha}</span>
-                        <span style="font-size:10px; color:${catColor}; font-weight:bold;">${g.categoria || 'Otros'}</span>
+                        <span style="font-size:12px; color:var(--date-color);">📅 ${g.fecha} <span style="color:${catColor}; font-weight:bold; margin-left:5px;">${g.categoria || 'Otros'}</span></span>
                     </div>
-                    <div style="background: ${catColor}25; color: ${catColor}; padding: 6px 12px; border-radius: 20px; font-weight:bold; font-size:15px;">
-                        $${g.monto.toFixed(2)}
-                    </div>
+                    <div style="background: ${catColor}25; color: ${catColor}; padding: 6px 12px; border-radius: 20px; font-weight:bold; font-size:15px;">$${g.monto.toFixed(2)}</div>
                 </div>`;
             });
         }
         listadoHTML += `</div>`;
         showModal(`Gastos de la Semana`, listadoHTML, false);
+    }
+
+    function exportarPDF(idx) {
+        let archivo = JSON.parse(localStorage.getItem('historialArchivado_v1')) || [];
+        let semana = archivo[idx];
+        let colorClase = semana.sobrante < 0 ? '#ff5252' : '#00e676';
+        let printArea = document.getElementById('printArea');
+        if(!printArea) { printArea = document.createElement('div'); printArea.id = 'printArea'; document.body.appendChild(printArea); }
+
+        let totalGastos = semana.totalGastos;
+        let catSums = {};
+        semana.gastos.forEach(g => { let cat = g.categoria || 'Otros'; catSums[cat] = (catSums[cat] || 0) + g.monto; });
+
+        let chartCSS = []; let currentDeg = 0; let legendHTML = '';
+        if(totalGastos > 0) {
+            for (let c in catSums) {
+                let percentage = (catSums[c] / totalGastos) * 360;
+                let color = catColors[c] || '#9e9e9e';
+                chartCSS.push(`${color} ${currentDeg}deg ${currentDeg + percentage}deg`);
+                currentDeg += percentage;
+                let pctText = ((catSums[c] / totalGastos) * 100).toFixed(1);
+                legendHTML += `<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; color:#333;"><div style="display:flex; align-items:center;"><span style="width: 12px; height: 12px; border-radius: 50%; background: ${color}; display: inline-block; margin-right: 8px; -webkit-print-color-adjust: exact; print-color-adjust: exact;"></span>${c}</div><strong style="margin-left:15px;">$${catSums[c].toFixed(2)} <span style="font-weight:normal; font-size:11px; color:#555;">(${pctText}%)</span></strong></div>`;
+            }
+        }
+
+        let tableRows = '';
+        if(semana.gastos.length === 0) tableRows = `<tr><td colspan="4" style="text-align:center;">No hubo gastos registrados en este periodo.</td></tr>`;
+        else {
+            semana.gastos.forEach(g => {
+                let cat = g.categoria || 'Otros'; let hexColor = catColors[cat] || '#9e9e9e';
+                tableRows += `<tr><td>${g.fecha}</td><td><strong>${g.concepto}</strong></td><td><span class="print-cat-badge" style="background-color: ${hexColor};">${cat}</span></td><td style="text-align:right;">$${g.monto.toFixed(2)}</td></tr>`;
+            });
+        }
+
+        let html = `
+            <div class="print-header">
+                <h1 class="print-title">Reporte de Balance Semanal</h1>
+                <div class="print-subtitle"><strong>Periodo:</strong> ${semana.fecha} ${semana.etiqueta ? `(${semana.etiqueta})` : ''}</div>
+            </div>
+            <div class="print-summary">
+                <div class="print-summary-item"><div>Total Recibido</div><div class="print-summary-value" style="color: #333;">$${semana.ingreso.toFixed(2)}</div></div>
+                <div class="print-summary-item"><div>Total Gastado</div><div class="print-summary-value" style="color: #333;">$${semana.totalGastos.toFixed(2)}</div></div>
+                <div class="print-summary-item" style="color: ${colorClase}; -webkit-print-color-adjust: exact; print-color-adjust: exact;"><div style="color: #333;">Balance Final</div><div class="print-summary-value">$${semana.sobrante.toFixed(2)}</div></div>
+            </div>`;
+        if(totalGastos > 0) html += `<div class="print-chart-container"><div class="print-pie" style="background: conic-gradient(${chartCSS.join(', ')});"></div><div style="font-size:14px;">${legendHTML}</div></div>`;
+        html += `<table class="print-table"><thead><tr><th>Fecha</th><th>Concepto</th><th>Categoría</th><th style="text-align:right;">Monto ($)</th></tr></thead><tbody>${tableRows}</tbody></table><div class="print-footer">Generado por App Balance ITO • ${new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' })}</div>`;
+
+        printArea.innerHTML = html;
+        setTimeout(() => { window.print(); }, 300);
+    }
+
+    // --- RESPALDO (EXPORT / IMPORT) ---
+    function exportarRespaldo() {
+        let respaldo = {
+            version: 1, gastos: localStorage.getItem('misGastos_v4'), ingreso: localStorage.getItem('miIngreso_v3'), ingresosExtra: localStorage.getItem('misIngresosExtra_v1'),
+            historial: localStorage.getItem('historialArchivado_v1'), accesos: localStorage.getItem('misAccesos_v2'), alcancia: localStorage.getItem('miAlcancia_v1'), prestamos: localStorage.getItem('misPrestamos_v1'),
+            lunes: localStorage.getItem('currentMonday_v1'), inicioSemana: localStorage.getItem('fechaInicio_v3')
+        };
+        let blob = new Blob([JSON.stringify(respaldo)], { type: 'application/json' });
+        let url = URL.createObjectURL(blob); let link = document.createElement("a"); link.setAttribute("href", url);
+        let fecha = new Date().toLocaleDateString('es-MX').replace(/\//g, '-');
+        link.setAttribute("download", `Respaldo_Balance_${fecha}.json`);
+        document.body.appendChild(link); link.click(); document.body.removeChild(link);
+    }
+
+    function procesarImportacion(event) {
+        let file = event.target.files[0]; if(!file) return;
+        let reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                let data = JSON.parse(e.target.result);
+                if(data.gastos !== undefined || data.historial !== undefined) {
+                    showModal('Restaurar Respaldo', 'Al restaurar, se borrarán tus datos actuales y serán reemplazados. ¿Estás seguro?', true, () => {
+                        if(data.gastos) localStorage.setItem('misGastos_v4', data.gastos);
+                        if(data.ingreso) localStorage.setItem('miIngreso_v3', data.ingreso);
+                        if(data.ingresosExtra) localStorage.setItem('misIngresosExtra_v1', data.ingresosExtra);
+                        if(data.historial) localStorage.setItem('historialArchivado_v1', data.historial);
+                        if(data.accesos) localStorage.setItem('misAccesos_v2', data.accesos);
+                        if(data.alcancia) localStorage.setItem('miAlcancia_v1', data.alcancia);
+                        if(data.prestamos) localStorage.setItem('misPrestamos_v1', data.prestamos);
+                        if(data.lunes) localStorage.setItem('currentMonday_v1', data.lunes);
+                        if(data.inicioSemana) localStorage.setItem('fechaInicio_v3', data.inicioSemana);
+                        
+                        showModal('Éxito', 'Tus datos se restauraron. La app se actualizará ahora.', false, () => { window.location.reload(); });
+                        setTimeout(() => { window.location.reload(); }, 2500);
+                    }, 'Sí, restaurar');
+                } else { showModal('Archivo Inválido', 'El archivo no parece ser un respaldo válido.', false); }
+            } catch(error) { showModal('Error', 'Hubo un problema al leer el archivo. Asegúrate de que sea el .json original.', false); }
+            event.target.value = '';
+        };
+        reader.readAsText(file);
     }
 
     // Inicializar
@@ -932,4 +984,3 @@
 </script>
 </body>
 </html>
-
