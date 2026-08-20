@@ -170,6 +170,7 @@
     <ul class="sidebar-menu">
         <li onclick="navigate('dashboard')">🏠 Semana Actual</li>
         <li onclick="navigate('archive')">📂 Historial de Semanas</li>
+        <li onclick="navigate('settings')">⚙️ Respaldo y Datos</li>
     </ul>
 </div>
 
@@ -225,6 +226,32 @@
             <div id="listaGastosGrouped"></div>
 
             <button class="btn-danger" onclick="confirmarLimpieza()">Cerrar y Archivar Semana</button>
+        </div>
+
+        <!-- PANTALLA 3: CONFIGURACIÓN Y RESPALDO -->
+        <div id="view-settings" class="page-section">
+            <div class="header-section">
+                <button class="menu-btn" onclick="openSidebar()">☰</button>
+                <h2>Respaldo de Datos</h2>
+                <div style="width: 40px;"></div>
+            </div>
+            
+            <div class="card" style="text-align: left;">
+                <h3 style="margin-top: 0; color: #4db8ff;">Tus Datos Seguros</h3>
+                <p style="font-size: 14px; color: var(--label-color); line-height: 1.5;">
+                    Crea una copia de seguridad de todo tu historial y configuraciones. Puedes enviarte este archivo por correo o WhatsApp para no perder nada si cambias de celular o borras el navegador.
+                </p>
+                <button onclick="exportarRespaldo()" style="background-color: #00e676; margin-top: 10px;">⬇️ Descargar Copia (.json)</button>
+            </div>
+
+            <div class="card" style="text-align: left; border-left-color: #ff9800;">
+                <h3 style="margin-top: 0; color: #ff9800;">Restaurar Datos</h3>
+                <p style="font-size: 14px; color: var(--label-color); line-height: 1.5;">
+                    Sube un archivo de respaldo previo para recuperar tu información. <strong>Ojo:</strong> Esto reemplazará los datos que tengas actualmente.
+                </p>
+                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="procesarImportacion(event)">
+                <button onclick="document.getElementById('importFile').click()" style="background-color: #ff9800; margin-top: 10px; color: white;">⬆️ Subir Archivo de Respaldo</button>
+            </div>
         </div>
 
         <!-- PANTALLA 2: HISTORIAL ARCHIVADO -->
@@ -710,6 +737,68 @@
         setTimeout(() => {
             window.print();
         }, 300);
+    }
+
+    
+    // --- RESPALDO Y RESTAURACIÓN ---
+    function exportarRespaldo() {
+        let respaldo = {
+            version: 1,
+            gastos: localStorage.getItem('misGastos_v4'),
+            ingreso: localStorage.getItem('miIngreso_v3'),
+            historial: localStorage.getItem('historialArchivado_v1'),
+            accesos: localStorage.getItem('misAccesos_v2'),
+            lunes: localStorage.getItem('currentMonday_v1'),
+            inicioSemana: localStorage.getItem('fechaInicio_v3')
+        };
+        
+        let blob = new Blob([JSON.stringify(respaldo)], { type: 'application/json' });
+        let url = URL.createObjectURL(blob);
+        let link = document.createElement("a");
+        link.setAttribute("href", url);
+        
+        let fecha = new Date().toLocaleDateString('es-MX').replace(/\//g, '-');
+        link.setAttribute("download", `Respaldo_Balance_${fecha}.json`);
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    function procesarImportacion(event) {
+        let file = event.target.files[0];
+        if(!file) return;
+        
+        let reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                let data = JSON.parse(e.target.result);
+                
+                // Validación básica de que sea un archivo de la app
+                if(data.gastos !== undefined || data.historial !== undefined) {
+                    showModal('Restaurar Respaldo', 'Al restaurar, se borrarán tus datos actuales y serán reemplazados por los del archivo. ¿Estás seguro?', true, () => {
+                        if(data.gastos) localStorage.setItem('misGastos_v4', data.gastos);
+                        if(data.ingreso) localStorage.setItem('miIngreso_v3', data.ingreso);
+                        if(data.historial) localStorage.setItem('historialArchivado_v1', data.historial);
+                        if(data.accesos) localStorage.setItem('misAccesos_v2', data.accesos);
+                        if(data.lunes) localStorage.setItem('currentMonday_v1', data.lunes);
+                        if(data.inicioSemana) localStorage.setItem('fechaInicio_v3', data.inicioSemana);
+                        
+                        showModal('Éxito', 'Tus datos se restauraron correctamente. La aplicación se actualizará ahora.', false, () => {
+                            window.location.reload();
+                        });
+                        // Por si el usuario no presiona "Entendido" y toca fuera
+                        setTimeout(() => { window.location.reload(); }, 2500);
+                    }, 'Sí, restaurar');
+                } else {
+                    showModal('Archivo Inválido', 'El archivo que seleccionaste no parece ser un respaldo válido de esta aplicación.', false);
+                }
+            } catch(error) {
+                showModal('Error', 'Hubo un problema al leer el archivo. Asegúrate de que sea el .json original.', false);
+            }
+            event.target.value = ''; // Limpiar el input
+        };
+        reader.readAsText(file);
     }
 
     // --- ARCHIVO Y CERRAR SEMANA ---
