@@ -393,8 +393,9 @@
         document.getElementById('sidebarOverlay').classList.remove('show');
     }
     function navigate(view) {
-        document.getElementById('view-dashboard').classList.remove('active');
-        document.getElementById('view-archive').classList.remove('active');
+        // Ocultar todas las pantallas primero
+        document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
+        // Mostrar solo la pantalla solicitada
         document.getElementById('view-' + view).classList.add('active');
         closeSidebar();
         if(view === 'archive') renderArchive();
@@ -931,3 +932,4 @@
 </script>
 </body>
 </html>
+
